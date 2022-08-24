@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.75">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="StatsForecast offers a collection of widely used univariate time series forecasting models, including automatic ARIMA and ETS modeling optimized for high performance using numba. It also includes a large battery of benchmarking models.">
+
+<title>statsforecast - Statistical ⚡️ Forecast</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: 1;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="statsforecast - Statistical ⚡️ Forecast">
+<meta property="og:description" content="StatsForecast offers a collection of widely used univariate time series forecasting models, including automatic ARIMA and ETS modeling optimized for high performance using numba. It also includes a large battery of benchmarking models.">
+<meta property="og:site-name" content="statsforecast">
+<meta name="twitter:title" content="statsforecast - Statistical ⚡️ Forecast">
+<meta name="twitter:description" content="StatsForecast offers a collection of widely used univariate time series forecasting models, including automatic ARIMA and ETS modeling optimized for high performance using numba. It also includes a large battery of benchmarking models.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">statsforecast</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./examples/Getting_Started_with_Auto_Arima_and_ETS.html" aria-current="page">Get Started</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/Nixtla/statsforecast/tree/main/experiments">Experiments</a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-help" role="button" data-bs-toggle="dropdown" aria-expanded="false">Help</a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-help">    
+        <li>
+    <a class="dropdown-item" href="https://github.com/nixtla/statsforecast/issues"><i class="bi bi-bug" role="img">
+</i> 
+ <span class="dropdown-text">Report an Issue</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://join.slack.com/t/nixtlaworkspace/shared_invite/zt-135dssye9-fWTzMpv2WBthq8NK0Yvu6A"><i class="bi bi-chat-right-text" role="img">
+</i> 
+ <span class="dropdown-text">Slack Nixtla</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Nixtla/statsforecast/tree/main/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/nixtlainc"><i class="bi bi-twitter" role="img" aria-label="Nixtla Twitter">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Statistical ⚡️ Forecast</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link active">Statistical ⚡️ Forecast</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Getting_Started_with_Auto_Arima_and_ETS.html" class="sidebar-item-text sidebar-link">Getting Started with AutoARIMA and ETS</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Installation.html" class="sidebar-item-text sidebar-link">Installation</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Reference</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./core.html" class="sidebar-item-text sidebar-link">Core</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.html" class="sidebar-item-text sidebar-link">Models</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils.html" class="sidebar-item-text sidebar-link">Utils</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./adapters.prophet.html" class="sidebar-item-text sidebar-link">Adapters for Prophet</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">Distributed</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributed.fugue.html" class="sidebar-item-text sidebar-link">Fugue Backend</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributed.ray.html" class="sidebar-item-text sidebar-link">Ray Backend</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributed.multiprocess.html" class="sidebar-item-text sidebar-link">Multiprocess Backend</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributed.utils.html" class="sidebar-item-text sidebar-link">Distributed utils</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/AutoArima_vs_Prophet.html" class="sidebar-item-text sidebar-link">AutoARIMA Comparison (Prophet and pmdarima)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/CrossValidation.html" class="sidebar-item-text sidebar-link">Cross-validation for Time Series</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/IntermittentData.html" class="sidebar-item-text sidebar-link">Forecasting Intermitent Time Series</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Exogenous.html" class="sidebar-item-text sidebar-link">Exogenous Regressors</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/UncertaintyIntervals.html" class="sidebar-item-text sidebar-link">Prediction Intervals</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Outliers.html" class="sidebar-item-text sidebar-link">Outliers</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/NonDailyData.html" class="sidebar-item-text sidebar-link">Non Daily Data</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/ForecastingAtScale.html" class="sidebar-item-text sidebar-link">Forecasting at Scale</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Contributing.html" class="sidebar-item-text sidebar-link">How to Contribute</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#installation-and-getting-started" id="toc-installation-and-getting-started" class="nav-link active" data-scroll-target="#installation-and-getting-started">💻 Installation and Getting Started</a>
+  <ul>
+  <li><a href="#pypi" id="toc-pypi" class="nav-link" data-scroll-target="#pypi">PyPI</a></li>
+  <li><a href="#conda" id="toc-conda" class="nav-link" data-scroll-target="#conda">Conda</a></li>
+  <li><a href="#dev-mode" id="toc-dev-mode" class="nav-link" data-scroll-target="#dev-mode">Dev Mode</a></li>
+  </ul></li>
+  <li><a href="#new" id="toc-new" class="nav-link" data-scroll-target="#new">🎉 New!</a></li>
+  <li><a href="#highlights" id="toc-highlights" class="nav-link" data-scroll-target="#highlights">🔥 Highlights</a></li>
+  <li><a href="#features" id="toc-features" class="nav-link" data-scroll-target="#features">🎊 Features</a></li>
+  <li><a href="#why" id="toc-why" class="nav-link" data-scroll-target="#why">📖 Why?</a></li>
+  <li><a href="#accuracy-speed" id="toc-accuracy-speed" class="nav-link" data-scroll-target="#accuracy-speed">🔬 Accuracy &amp; ⏲ Speed</a>
+  <ul>
+  <li><a href="#arima" id="toc-arima" class="nav-link" data-scroll-target="#arima">ARIMA</a></li>
+  <li><a href="#ets" id="toc-ets" class="nav-link" data-scroll-target="#ets">ETS</a></li>
+  <li><a href="#benchmarks-at-scale" id="toc-benchmarks-at-scale" class="nav-link" data-scroll-target="#benchmarks-at-scale">Benchmarks at Scale</a></li>
+  </ul></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">🧬 Getting Started</a></li>
+  <li><a href="#how-to-contribute" id="toc-how-to-contribute" class="nav-link" data-scroll-target="#how-to-contribute">🔨 How to contribute</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">📃 References</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Nixtla/statsforecast/tree/main/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Statistical ⚡️ Forecast</h1>
+</div>
+
+<div>
+  <div class="description">
+    StatsForecast offers a collection of widely used univariate time series forecasting models, including automatic ARIMA and ETS modeling optimized for high performance using numba. It also includes a large battery of benchmarking models.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="installation-and-getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="installation-and-getting-started">💻 Installation and Getting Started</h2>
+<section id="pypi" class="level3">
+<h3 class="anchored" data-anchor-id="pypi">PyPI</h3>
+<p>You can install the <em>released version</em> of <a href="https://Nixtla.github.io/statsforecast/core.html#statsforecast"><code>StatsForecast</code></a> from the <a href="https://pypi.org">Python package index</a> with:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pip install statsforecast</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>(Installing inside a python virtualenvironment or a conda environment is recommended.)</p>
+</section>
+<section id="conda" class="level3">
+<h3 class="anchored" data-anchor-id="conda">Conda</h3>
+<p>Also you can install the <em>released version</em> of <a href="https://Nixtla.github.io/statsforecast/core.html#statsforecast"><code>StatsForecast</code></a> from <a href="https://anaconda.org">conda</a> with:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>conda install <span class="op">-</span>c conda<span class="op">-</span>forge statsforecast</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>(Installing inside a python virtualenvironment or a conda environment is recommended.)</p>
+</section>
+<section id="dev-mode" class="level3">
+<h3 class="anchored" data-anchor-id="dev-mode">Dev Mode</h3>
+<p>If you want to make some modifications to the code and see the effects in real time (without reinstalling), follow the steps below:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/Nixtla/statsforecast.git</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> statsforecast</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-e</span> .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To get started just follow this <a href="./examples/Getting_Started_with_Auto_Arima_and_ETS.html">guide</a>.</p>
+</section>
+</section>
+<section id="new" class="level2">
+<h2 class="anchored" data-anchor-id="new">🎉 New!</h2>
+<ul>
+<li><a href="https://colab.research.google.com/github/nixtla/statsforecast/blob/main/nbs/examples/Getting_Started_with_Auto_Arima_and_ETS.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <strong>ETS Example</strong>: 4x faster than StatsModels with improved accuracy and robustness.</li>
+<li><a href="https://colab.research.google.com/github/nixtla/statsforecast/blob/main/nbs/examples/AutoArima_vs_Prophet.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <strong>Complete pipeline and comparison</strong>: 20x faster than pmdarima and 500x faster than Prophet.</li>
+</ul>
+</section>
+<section id="highlights" class="level2">
+<h2 class="anchored" data-anchor-id="highlights">🔥 Highlights</h2>
+<ul>
+<li><p>Fastest and most accurate <a href="https://Nixtla.github.io/statsforecast/models.html#autoarima"><code>AutoARIMA</code></a> in <code>Python</code> and <code>R</code>.</p></li>
+<li><p>Fastest and most accurate <a href="https://Nixtla.github.io/statsforecast/models.html#ets"><code>ETS</code></a> in <code>Python</code> and <code>R</code>.</p></li>
+<li><p><strong>New!</strong>: Replace FB-Prophet in two lines of code and gain speed and accuracy. Check the experiments <a href="https://github.com/Nixtla/statsforecast/tree/main/experiments/arima_prophet_adapter">here</a>.</p></li>
+<li><p><strong>New!</strong>: Distributed computation in clusters with <a href="https://github.com/ray-project/ray">ray</a>. (Forecast 1M series in <a href="https://github.com/Nixtla/statsforecast/tree/main/experiments/ray">30min</a>)</p></li>
+<li><p><strong>New!</strong>: Good Ol’ sklearn syntax with <a href="https://Nixtla.github.io/statsforecast/models.html#autoarima"><code>AutoARIMA</code></a> (<code>AutoARIMA().fit(y).predict(h=7)</code>.</p></li>
+</ul>
+</section>
+<section id="features" class="level2">
+<h2 class="anchored" data-anchor-id="features">🎊 Features</h2>
+<ul>
+<li><p>Inclusion of <code>exogenous variables</code> and <code>prediction intervals</code> for ARIMA.</p></li>
+<li><p>20x faster than <code>pmdarima</code>.</p></li>
+<li><p>1.5x faster than <code>R</code>.</p></li>
+<li><p>500x faster than <code>Prophet</code>.</p></li>
+<li><p>4x faster than <code>statsmodels</code>.</p></li>
+<li><p>Compiled to high performance machine code through <a href="https://numba.pydata.org/"><code>numba</code></a>.</p></li>
+<li><p>1,000,000 series in <a href="https://github.com/Nixtla/statsforecast/tree/main/experiments/ray">30 min</a> with <a href="https://github.com/ray-project/ray">ray</a>.</p></li>
+<li><p>Out of the box implementation of <a href="https://Nixtla.github.io/statsforecast/models.html#adida"><code>ADIDA</code></a>, <a href="https://Nixtla.github.io/statsforecast/models.html#historicaverage"><code>HistoricAverage</code></a>, <a href="https://Nixtla.github.io/statsforecast/models.html#crostonclassic"><code>CrostonClassic</code></a>, <a href="https://Nixtla.github.io/statsforecast/models.html#crostonsba"><code>CrostonSBA</code></a>, <a href="https://Nixtla.github.io/statsforecast/models.html#crostonoptimized"><code>CrostonOptimized</code></a>, <a href="https://Nixtla.github.io/statsforecast/models.html#seasonalwindowaverage"><code>SeasonalWindowAverage</code></a>, <a href="https://Nixtla.github.io/statsforecast/models.html#seasonalnaive"><code>SeasonalNaive</code></a>, <a href="https://Nixtla.github.io/statsforecast/models.html#imapa"><code>IMAPA</code></a> <a href="https://Nixtla.github.io/statsforecast/models.html#naive"><code>Naive</code></a>, <a href="https://Nixtla.github.io/statsforecast/models.html#randomwalkwithdrift"><code>RandomWalkWithDrift</code></a>, <a href="https://Nixtla.github.io/statsforecast/models.html#windowaverage"><code>WindowAverage</code></a>, <a href="https://Nixtla.github.io/statsforecast/models.html#seasonalexponentialsmoothing"><code>SeasonalExponentialSmoothing</code></a>, <a href="https://Nixtla.github.io/statsforecast/models.html#tsb"><code>TSB</code></a>, <a href="https://Nixtla.github.io/statsforecast/models.html#autoarima"><code>AutoARIMA</code></a> and <a href="https://Nixtla.github.io/statsforecast/models.html#ets"><code>ETS</code></a>.</p></li>
+</ul>
+<p>Missing something? Please open an issue or write us in <a href="https://join.slack.com/t/nixtlaworkspace/shared_invite/zt-135dssye9-fWTzMpv2WBthq8NK0Yvu6A"><img src="https://img.shields.io/badge/Slack-4A154B?&amp;logo=slack&amp;logoColor=white.png" class="img-fluid" alt="Slack"></a></p>
+</section>
+<section id="why" class="level2">
+<h2 class="anchored" data-anchor-id="why">📖 Why?</h2>
+<p>Current Python alternatives for statistical models are slow, inaccurate and don’t scale well. So we created a library that can be used to forecast in production environments or as benchmarks. <a href="https://Nixtla.github.io/statsforecast/core.html#statsforecast"><code>StatsForecast</code></a> includes an extensive battery of models that can efficiently fit millions of time series.</p>
+</section>
+<section id="accuracy-speed" class="level2">
+<h2 class="anchored" data-anchor-id="accuracy-speed">🔬 Accuracy &amp; ⏲ Speed</h2>
+<section id="arima" class="level3">
+<h3 class="anchored" data-anchor-id="arima">ARIMA</h3>
+<p>The <a href="https://Nixtla.github.io/statsforecast/models.html#autoarima"><code>AutoARIMA</code></a> model implemented in <a href="https://Nixtla.github.io/statsforecast/core.html#statsforecast"><code>StatsForecast</code></a> is <strong>20x faster</strong> than <code>pmdarima</code> and <strong>1.5x faster</strong> than <code>R</code> while improving accuracy. You can see the exact comparison and reproduce the results <a href="./experiments/arima/">here</a>.</p>
+</section>
+<section id="ets" class="level3">
+<h3 class="anchored" data-anchor-id="ets">ETS</h3>
+<p>StatsForecast’s <a href="https://Nixtla.github.io/statsforecast/models.html#ets"><code>ETS</code></a> is <strong>4x faster than StatsModels’</strong> and <strong>1.6x faster than R’s</strong>, with improved accuracy and robustness. You can see the exact comparison and reproduce the results<a href="./experiments/ets/">here</a></p>
+</section>
+<section id="benchmarks-at-scale" class="level3">
+<h3 class="anchored" data-anchor-id="benchmarks-at-scale">Benchmarks at Scale</h3>
+<p>With <a href="https://Nixtla.github.io/statsforecast/core.html#statsforecast"><code>StatsForecast</code></a> you can fit 9 benchmark models on <strong>1,000,000</strong> series in under <strong>5 min</strong>. Reproduce the results <a href="./experiments/benchmarks_at_scale/">here</a>.</p>
+</section>
+</section>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">🧬 Getting Started</h2>
+<p>You can run this notebooks to get you started.</p>
+<ul>
+<li><p>Example of different <a href="https://Nixtla.github.io/statsforecast/models.html#autoarima"><code>AutoARIMA</code></a> models on M4 data <a href="https://colab.research.google.com/github/nixtla/statsforecast/blob/main/nbs/examples/AutoArima_vs_Prophet.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></p>
+<ul>
+<li>In this notebook we present Nixtla’s <code>AutoARIMA</code>. The <code>AutoARIMA</code> model is widely used to forecast time series in production and as a benchmark. However, the alternative python implementation (<code>pmdarima</code>) is so slow that prevents data scientists from quickly iterating and deploying <code>AutoARIMA</code> in production for a large number of time series.</li>
+</ul></li>
+<li><p>Shorter Example of fitting and <a href="https://Nixtla.github.io/statsforecast/models.html#autoarima"><code>AutoARIMA</code></a> and an <a href="https://Nixtla.github.io/statsforecast/models.html#ets"><code>ETS</code></a> model. <a href="https://colab.research.google.com/github/nixtla/statsforecast/blob/main/nbs/examples/Getting_Started_with_Auto_Arima_and_ETS.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></p></li>
+<li><p>Benchmarking 9 models on millions of <a href="./experiments/benchmarks_at_scale/">series</a>.</p></li>
+</ul>
+</section>
+<section id="how-to-contribute" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-contribute">🔨 How to contribute</h2>
+<p>See <a href="https://github.com/Nixtla/statsforecast/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">📃 References</h2>
+<ul>
+<li>The <a href="https://Nixtla.github.io/statsforecast/models.html#autoarima"><code>AutoARIMA</code></a> model is based (translated) from the R implementation included in the <a href="https://github.com/robjhyndman/forecast">forecast</a> package developed by Rob Hyndman.</li>
+<li>The <a href="https://Nixtla.github.io/statsforecast/models.html#ets"><code>ETS</code></a> model is based (translated) from the R implementation included in the <a href="https://github.com/robjhyndman/forecast">forecast</a> package developed by Rob Hyndman.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,3565 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.75">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Uniserie models implementations.">
+
+<title>statsforecast - Models</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: 1;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="statsforecast - Models">
+<meta property="og:description" content="Uniserie models implementations.">
+<meta property="og:site-name" content="statsforecast">
+<meta name="twitter:title" content="statsforecast - Models">
+<meta name="twitter:description" content="Uniserie models implementations.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">statsforecast</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./examples/Getting_Started_with_Auto_Arima_and_ETS.html" aria-current="page">Get Started</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/Nixtla/statsforecast/tree/main/experiments">Experiments</a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-help" role="button" data-bs-toggle="dropdown" aria-expanded="false">Help</a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-help">    
+        <li>
+    <a class="dropdown-item" href="https://github.com/nixtla/statsforecast/issues"><i class="bi bi-bug" role="img">
+</i> 
+ <span class="dropdown-text">Report an Issue</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://join.slack.com/t/nixtlaworkspace/shared_invite/zt-135dssye9-fWTzMpv2WBthq8NK0Yvu6A"><i class="bi bi-chat-right-text" role="img">
+</i> 
+ <span class="dropdown-text">Slack Nixtla</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Nixtla/statsforecast/tree/main/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/nixtlainc"><i class="bi bi-twitter" role="img" aria-label="Nixtla Twitter">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Models</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Statistical ⚡️ Forecast</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Getting_Started_with_Auto_Arima_and_ETS.html" class="sidebar-item-text sidebar-link">Getting Started with AutoARIMA and ETS</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Installation.html" class="sidebar-item-text sidebar-link">Installation</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Reference</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./core.html" class="sidebar-item-text sidebar-link">Core</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.html" class="sidebar-item-text sidebar-link active">Models</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils.html" class="sidebar-item-text sidebar-link">Utils</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./adapters.prophet.html" class="sidebar-item-text sidebar-link">Adapters for Prophet</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">Distributed</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributed.fugue.html" class="sidebar-item-text sidebar-link">Fugue Backend</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributed.ray.html" class="sidebar-item-text sidebar-link">Ray Backend</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributed.multiprocess.html" class="sidebar-item-text sidebar-link">Multiprocess Backend</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributed.utils.html" class="sidebar-item-text sidebar-link">Distributed utils</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/AutoArima_vs_Prophet.html" class="sidebar-item-text sidebar-link">AutoARIMA Comparison (Prophet and pmdarima)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/CrossValidation.html" class="sidebar-item-text sidebar-link">Cross-validation for Time Series</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/IntermittentData.html" class="sidebar-item-text sidebar-link">Forecasting Intermitent Time Series</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Exogenous.html" class="sidebar-item-text sidebar-link">Exogenous Regressors</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/UncertaintyIntervals.html" class="sidebar-item-text sidebar-link">Prediction Intervals</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Outliers.html" class="sidebar-item-text sidebar-link">Outliers</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/NonDailyData.html" class="sidebar-item-text sidebar-link">Non Daily Data</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/ForecastingAtScale.html" class="sidebar-item-text sidebar-link">Forecasting at Scale</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Contributing.html" class="sidebar-item-text sidebar-link">How to Contribute</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#arima-methods" id="toc-arima-methods" class="nav-link active" data-scroll-target="#arima-methods">ARIMA methods</a>
+  <ul>
+  <li><a href="#autoarima" id="toc-autoarima" class="nav-link" data-scroll-target="#autoarima">AutoARIMA</a></li>
+  <li><a href="#autoarima.forecast" id="toc-autoarima.forecast" class="nav-link" data-scroll-target="#autoarima.forecast">AutoARIMA.forecast</a></li>
+  <li><a href="#autoarima.fit" id="toc-autoarima.fit" class="nav-link" data-scroll-target="#autoarima.fit">AutoARIMA.fit</a></li>
+  <li><a href="#autoarima.predict" id="toc-autoarima.predict" class="nav-link" data-scroll-target="#autoarima.predict">AutoARIMA.predict</a></li>
+  <li><a href="#autoarima.predict_in_sample" id="toc-autoarima.predict_in_sample" class="nav-link" data-scroll-target="#autoarima.predict_in_sample">AutoARIMA.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description" id="toc-model-description" class="nav-link" data-scroll-target="#model-description">Model Description</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#exponential-smoothing-methods" id="toc-exponential-smoothing-methods" class="nav-link" data-scroll-target="#exponential-smoothing-methods">Exponential smoothing methods</a>
+  <ul>
+  <li><a href="#ets" id="toc-ets" class="nav-link" data-scroll-target="#ets">ETS</a></li>
+  <li><a href="#ets.forecast" id="toc-ets.forecast" class="nav-link" data-scroll-target="#ets.forecast">ETS.forecast</a></li>
+  <li><a href="#ets.fit" id="toc-ets.fit" class="nav-link" data-scroll-target="#ets.fit">ETS.fit</a></li>
+  <li><a href="#ets.predict" id="toc-ets.predict" class="nav-link" data-scroll-target="#ets.predict">ETS.predict</a></li>
+  <li><a href="#ets.predict_in_sample" id="toc-ets.predict_in_sample" class="nav-link" data-scroll-target="#ets.predict_in_sample">ETS.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-1" id="toc-model-description-1" class="nav-link" data-scroll-target="#model-description-1">Model description</a></li>
+  </ul></li>
+  <li><a href="#simpleexponentialsmoothing" id="toc-simpleexponentialsmoothing" class="nav-link" data-scroll-target="#simpleexponentialsmoothing">SimpleExponentialSmoothing</a></li>
+  <li><a href="#simpleexponentialsmoothing.forecast" id="toc-simpleexponentialsmoothing.forecast" class="nav-link" data-scroll-target="#simpleexponentialsmoothing.forecast">SimpleExponentialSmoothing.forecast</a></li>
+  <li><a href="#simpleexponentialsmoothing.fit" id="toc-simpleexponentialsmoothing.fit" class="nav-link" data-scroll-target="#simpleexponentialsmoothing.fit">SimpleExponentialSmoothing.fit</a></li>
+  <li><a href="#simpleexponentialsmoothing.predict" id="toc-simpleexponentialsmoothing.predict" class="nav-link" data-scroll-target="#simpleexponentialsmoothing.predict">SimpleExponentialSmoothing.predict</a></li>
+  <li><a href="#simpleexponentialsmoothing.predict_in_sample" id="toc-simpleexponentialsmoothing.predict_in_sample" class="nav-link" data-scroll-target="#simpleexponentialsmoothing.predict_in_sample">SimpleExponentialSmoothing.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-2" id="toc-model-description-2" class="nav-link" data-scroll-target="#model-description-2">Model description</a></li>
+  </ul></li>
+  <li><a href="#simpleexponentialsmoothingoptimized" id="toc-simpleexponentialsmoothingoptimized" class="nav-link" data-scroll-target="#simpleexponentialsmoothingoptimized">SimpleExponentialSmoothingOptimized</a></li>
+  <li><a href="#simpleexponentialsmoothingoptimized.forecast" id="toc-simpleexponentialsmoothingoptimized.forecast" class="nav-link" data-scroll-target="#simpleexponentialsmoothingoptimized.forecast">SimpleExponentialSmoothingOptimized.forecast</a></li>
+  <li><a href="#simpleexponentialsmoothingoptimized.fit" id="toc-simpleexponentialsmoothingoptimized.fit" class="nav-link" data-scroll-target="#simpleexponentialsmoothingoptimized.fit">SimpleExponentialSmoothingOptimized.fit</a></li>
+  <li><a href="#simpleexponentialsmoothingoptimized.predict" id="toc-simpleexponentialsmoothingoptimized.predict" class="nav-link" data-scroll-target="#simpleexponentialsmoothingoptimized.predict">SimpleExponentialSmoothingOptimized.predict</a></li>
+  <li><a href="#simpleexponentialsmoothingoptimized.predict_in_sample" id="toc-simpleexponentialsmoothingoptimized.predict_in_sample" class="nav-link" data-scroll-target="#simpleexponentialsmoothingoptimized.predict_in_sample">SimpleExponentialSmoothingOptimized.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-3" id="toc-model-description-3" class="nav-link" data-scroll-target="#model-description-3">Model description</a></li>
+  </ul></li>
+  <li><a href="#seasonalexponentialsmoothing" id="toc-seasonalexponentialsmoothing" class="nav-link" data-scroll-target="#seasonalexponentialsmoothing">SeasonalExponentialSmoothing</a></li>
+  <li><a href="#seasonalexponentialsmoothing.forecast" id="toc-seasonalexponentialsmoothing.forecast" class="nav-link" data-scroll-target="#seasonalexponentialsmoothing.forecast">SeasonalExponentialSmoothing.forecast</a></li>
+  <li><a href="#seasonalexponentialsmoothing.fit" id="toc-seasonalexponentialsmoothing.fit" class="nav-link" data-scroll-target="#seasonalexponentialsmoothing.fit">SeasonalExponentialSmoothing.fit</a></li>
+  <li><a href="#seasonalexponentialsmoothing.predict" id="toc-seasonalexponentialsmoothing.predict" class="nav-link" data-scroll-target="#seasonalexponentialsmoothing.predict">SeasonalExponentialSmoothing.predict</a></li>
+  <li><a href="#seasonalexponentialsmoothing.predict_in_sample" id="toc-seasonalexponentialsmoothing.predict_in_sample" class="nav-link" data-scroll-target="#seasonalexponentialsmoothing.predict_in_sample">SeasonalExponentialSmoothing.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-4" id="toc-model-description-4" class="nav-link" data-scroll-target="#model-description-4">Model description</a></li>
+  </ul></li>
+  <li><a href="#seasonalexponentialsmoothingoptimized" id="toc-seasonalexponentialsmoothingoptimized" class="nav-link" data-scroll-target="#seasonalexponentialsmoothingoptimized">SeasonalExponentialSmoothingOptimized</a></li>
+  <li><a href="#seasonalexponentialsmoothingoptimized.forecast" id="toc-seasonalexponentialsmoothingoptimized.forecast" class="nav-link" data-scroll-target="#seasonalexponentialsmoothingoptimized.forecast">SeasonalExponentialSmoothingOptimized.forecast</a></li>
+  <li><a href="#seasonalexponentialsmoothingoptimized.fit" id="toc-seasonalexponentialsmoothingoptimized.fit" class="nav-link" data-scroll-target="#seasonalexponentialsmoothingoptimized.fit">SeasonalExponentialSmoothingOptimized.fit</a></li>
+  <li><a href="#seasonalexponentialsmoothingoptimized.predict" id="toc-seasonalexponentialsmoothingoptimized.predict" class="nav-link" data-scroll-target="#seasonalexponentialsmoothingoptimized.predict">SeasonalExponentialSmoothingOptimized.predict</a></li>
+  <li><a href="#seasonalexponentialsmoothingoptimized.predict_in_sample" id="toc-seasonalexponentialsmoothingoptimized.predict_in_sample" class="nav-link" data-scroll-target="#seasonalexponentialsmoothingoptimized.predict_in_sample">SeasonalExponentialSmoothingOptimized.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-5" id="toc-model-description-5" class="nav-link" data-scroll-target="#model-description-5">Model description</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#simple-methods" id="toc-simple-methods" class="nav-link" data-scroll-target="#simple-methods">Simple methods</a>
+  <ul>
+  <li><a href="#historicaverage" id="toc-historicaverage" class="nav-link" data-scroll-target="#historicaverage">HistoricAverage</a></li>
+  <li><a href="#historicaverage.forecast" id="toc-historicaverage.forecast" class="nav-link" data-scroll-target="#historicaverage.forecast">HistoricAverage.forecast</a></li>
+  <li><a href="#historicaverage.fit" id="toc-historicaverage.fit" class="nav-link" data-scroll-target="#historicaverage.fit">HistoricAverage.fit</a></li>
+  <li><a href="#historicaverage.predict" id="toc-historicaverage.predict" class="nav-link" data-scroll-target="#historicaverage.predict">HistoricAverage.predict</a></li>
+  <li><a href="#historicaverage.predict_in_sample" id="toc-historicaverage.predict_in_sample" class="nav-link" data-scroll-target="#historicaverage.predict_in_sample">HistoricAverage.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-6" id="toc-model-description-6" class="nav-link" data-scroll-target="#model-description-6">Model description</a></li>
+  </ul></li>
+  <li><a href="#naive" id="toc-naive" class="nav-link" data-scroll-target="#naive">Naive</a></li>
+  <li><a href="#naive.forecast" id="toc-naive.forecast" class="nav-link" data-scroll-target="#naive.forecast">Naive.forecast</a></li>
+  <li><a href="#naive.fit" id="toc-naive.fit" class="nav-link" data-scroll-target="#naive.fit">Naive.fit</a></li>
+  <li><a href="#naive.predict" id="toc-naive.predict" class="nav-link" data-scroll-target="#naive.predict">Naive.predict</a></li>
+  <li><a href="#naive.predict_in_sample" id="toc-naive.predict_in_sample" class="nav-link" data-scroll-target="#naive.predict_in_sample">Naive.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-7" id="toc-model-description-7" class="nav-link" data-scroll-target="#model-description-7">Model description</a></li>
+  </ul></li>
+  <li><a href="#randomwalkwithdrift" id="toc-randomwalkwithdrift" class="nav-link" data-scroll-target="#randomwalkwithdrift">RandomWalkWithDrift</a></li>
+  <li><a href="#randomwalkwithdrift.forecast" id="toc-randomwalkwithdrift.forecast" class="nav-link" data-scroll-target="#randomwalkwithdrift.forecast">RandomWalkWithDrift.forecast</a></li>
+  <li><a href="#randomwalkwithdrift.fit" id="toc-randomwalkwithdrift.fit" class="nav-link" data-scroll-target="#randomwalkwithdrift.fit">RandomWalkWithDrift.fit</a></li>
+  <li><a href="#randomwalkwithdrift.predict" id="toc-randomwalkwithdrift.predict" class="nav-link" data-scroll-target="#randomwalkwithdrift.predict">RandomWalkWithDrift.predict</a></li>
+  <li><a href="#randomwalkwithdrift.predict_in_sample" id="toc-randomwalkwithdrift.predict_in_sample" class="nav-link" data-scroll-target="#randomwalkwithdrift.predict_in_sample">RandomWalkWithDrift.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-8" id="toc-model-description-8" class="nav-link" data-scroll-target="#model-description-8">Model description</a></li>
+  </ul></li>
+  <li><a href="#seasonalnaive" id="toc-seasonalnaive" class="nav-link" data-scroll-target="#seasonalnaive">SeasonalNaive</a></li>
+  <li><a href="#seasonalnaive.forecast" id="toc-seasonalnaive.forecast" class="nav-link" data-scroll-target="#seasonalnaive.forecast">SeasonalNaive.forecast</a></li>
+  <li><a href="#seasonalnaive.fit" id="toc-seasonalnaive.fit" class="nav-link" data-scroll-target="#seasonalnaive.fit">SeasonalNaive.fit</a></li>
+  <li><a href="#seasonalnaive.predict" id="toc-seasonalnaive.predict" class="nav-link" data-scroll-target="#seasonalnaive.predict">SeasonalNaive.predict</a></li>
+  <li><a href="#seasonalnaive.predict_in_sample" id="toc-seasonalnaive.predict_in_sample" class="nav-link" data-scroll-target="#seasonalnaive.predict_in_sample">SeasonalNaive.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-9" id="toc-model-description-9" class="nav-link" data-scroll-target="#model-description-9">Model description</a></li>
+  </ul></li>
+  <li><a href="#windowaverage" id="toc-windowaverage" class="nav-link" data-scroll-target="#windowaverage">WindowAverage</a></li>
+  <li><a href="#windowaverage.forecast" id="toc-windowaverage.forecast" class="nav-link" data-scroll-target="#windowaverage.forecast">WindowAverage.forecast</a></li>
+  <li><a href="#windowaverage.fit" id="toc-windowaverage.fit" class="nav-link" data-scroll-target="#windowaverage.fit">WindowAverage.fit</a></li>
+  <li><a href="#windowaverage.predict" id="toc-windowaverage.predict" class="nav-link" data-scroll-target="#windowaverage.predict">WindowAverage.predict</a></li>
+  <li><a href="#windowaverage.predict_in_sample" id="toc-windowaverage.predict_in_sample" class="nav-link" data-scroll-target="#windowaverage.predict_in_sample">WindowAverage.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-10" id="toc-model-description-10" class="nav-link" data-scroll-target="#model-description-10">Model description</a></li>
+  </ul></li>
+  <li><a href="#seasonalwindowaverage" id="toc-seasonalwindowaverage" class="nav-link" data-scroll-target="#seasonalwindowaverage">SeasonalWindowAverage</a></li>
+  <li><a href="#seasonalwindowaverage.forecast" id="toc-seasonalwindowaverage.forecast" class="nav-link" data-scroll-target="#seasonalwindowaverage.forecast">SeasonalWindowAverage.forecast</a></li>
+  <li><a href="#seasonalwindowaverage.fit" id="toc-seasonalwindowaverage.fit" class="nav-link" data-scroll-target="#seasonalwindowaverage.fit">SeasonalWindowAverage.fit</a></li>
+  <li><a href="#seasonalwindowaverage.predict" id="toc-seasonalwindowaverage.predict" class="nav-link" data-scroll-target="#seasonalwindowaverage.predict">SeasonalWindowAverage.predict</a></li>
+  <li><a href="#seasonalwindowaverage.predict_in_sample" id="toc-seasonalwindowaverage.predict_in_sample" class="nav-link" data-scroll-target="#seasonalwindowaverage.predict_in_sample">SeasonalWindowAverage.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-11" id="toc-model-description-11" class="nav-link" data-scroll-target="#model-description-11">Model description</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#sparse-or-intermittent-series" id="toc-sparse-or-intermittent-series" class="nav-link" data-scroll-target="#sparse-or-intermittent-series">Sparse or intermittent series</a>
+  <ul>
+  <li><a href="#adida" id="toc-adida" class="nav-link" data-scroll-target="#adida">ADIDA</a></li>
+  <li><a href="#adida.forecast" id="toc-adida.forecast" class="nav-link" data-scroll-target="#adida.forecast">ADIDA.forecast</a></li>
+  <li><a href="#adida.fit" id="toc-adida.fit" class="nav-link" data-scroll-target="#adida.fit">ADIDA.fit</a></li>
+  <li><a href="#adida.predict" id="toc-adida.predict" class="nav-link" data-scroll-target="#adida.predict">ADIDA.predict</a></li>
+  <li><a href="#adida.predict_in_sample" id="toc-adida.predict_in_sample" class="nav-link" data-scroll-target="#adida.predict_in_sample">ADIDA.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-12" id="toc-model-description-12" class="nav-link" data-scroll-target="#model-description-12">Model description</a></li>
+  </ul></li>
+  <li><a href="#crostonclassic" id="toc-crostonclassic" class="nav-link" data-scroll-target="#crostonclassic">CrostonClassic</a></li>
+  <li><a href="#crostonclassic.forecast" id="toc-crostonclassic.forecast" class="nav-link" data-scroll-target="#crostonclassic.forecast">CrostonClassic.forecast</a></li>
+  <li><a href="#crostonclassic.fit" id="toc-crostonclassic.fit" class="nav-link" data-scroll-target="#crostonclassic.fit">CrostonClassic.fit</a></li>
+  <li><a href="#crostonclassic.predict" id="toc-crostonclassic.predict" class="nav-link" data-scroll-target="#crostonclassic.predict">CrostonClassic.predict</a></li>
+  <li><a href="#crostonclassic.predict_in_sample" id="toc-crostonclassic.predict_in_sample" class="nav-link" data-scroll-target="#crostonclassic.predict_in_sample">CrostonClassic.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-13" id="toc-model-description-13" class="nav-link" data-scroll-target="#model-description-13">Model description</a></li>
+  </ul></li>
+  <li><a href="#crostonoptimized" id="toc-crostonoptimized" class="nav-link" data-scroll-target="#crostonoptimized">CrostonOptimized</a></li>
+  <li><a href="#crostonoptimized.forecast" id="toc-crostonoptimized.forecast" class="nav-link" data-scroll-target="#crostonoptimized.forecast">CrostonOptimized.forecast</a></li>
+  <li><a href="#crostonoptimized.fit" id="toc-crostonoptimized.fit" class="nav-link" data-scroll-target="#crostonoptimized.fit">CrostonOptimized.fit</a></li>
+  <li><a href="#crostonoptimized.predict" id="toc-crostonoptimized.predict" class="nav-link" data-scroll-target="#crostonoptimized.predict">CrostonOptimized.predict</a></li>
+  <li><a href="#crostonoptimized.predict_in_sample" id="toc-crostonoptimized.predict_in_sample" class="nav-link" data-scroll-target="#crostonoptimized.predict_in_sample">CrostonOptimized.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-14" id="toc-model-description-14" class="nav-link" data-scroll-target="#model-description-14">Model description</a></li>
+  </ul></li>
+  <li><a href="#crostonsba" id="toc-crostonsba" class="nav-link" data-scroll-target="#crostonsba">CrostonSBA</a></li>
+  <li><a href="#crostonsba.forecast" id="toc-crostonsba.forecast" class="nav-link" data-scroll-target="#crostonsba.forecast">CrostonSBA.forecast</a></li>
+  <li><a href="#crostonsba.fit" id="toc-crostonsba.fit" class="nav-link" data-scroll-target="#crostonsba.fit">CrostonSBA.fit</a></li>
+  <li><a href="#crostonsba.predict" id="toc-crostonsba.predict" class="nav-link" data-scroll-target="#crostonsba.predict">CrostonSBA.predict</a></li>
+  <li><a href="#crostonsba.predict_in_sample" id="toc-crostonsba.predict_in_sample" class="nav-link" data-scroll-target="#crostonsba.predict_in_sample">CrostonSBA.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-15" id="toc-model-description-15" class="nav-link" data-scroll-target="#model-description-15">Model description</a></li>
+  </ul></li>
+  <li><a href="#imapa" id="toc-imapa" class="nav-link" data-scroll-target="#imapa">IMAPA</a></li>
+  <li><a href="#imapa.forecast" id="toc-imapa.forecast" class="nav-link" data-scroll-target="#imapa.forecast">IMAPA.forecast</a></li>
+  <li><a href="#imapa.fit" id="toc-imapa.fit" class="nav-link" data-scroll-target="#imapa.fit">IMAPA.fit</a></li>
+  <li><a href="#imapa.predict" id="toc-imapa.predict" class="nav-link" data-scroll-target="#imapa.predict">IMAPA.predict</a></li>
+  <li><a href="#imapa.predict_in_sample" id="toc-imapa.predict_in_sample" class="nav-link" data-scroll-target="#imapa.predict_in_sample">IMAPA.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-16" id="toc-model-description-16" class="nav-link" data-scroll-target="#model-description-16">Model description</a></li>
+  </ul></li>
+  <li><a href="#tsb" id="toc-tsb" class="nav-link" data-scroll-target="#tsb">TSB</a></li>
+  <li><a href="#tsb.forecast" id="toc-tsb.forecast" class="nav-link" data-scroll-target="#tsb.forecast">TSB.forecast</a></li>
+  <li><a href="#tsb.fit" id="toc-tsb.fit" class="nav-link" data-scroll-target="#tsb.fit">TSB.fit</a></li>
+  <li><a href="#tsb.predict" id="toc-tsb.predict" class="nav-link" data-scroll-target="#tsb.predict">TSB.predict</a></li>
+  <li><a href="#tsb.predict_in_sample" id="toc-tsb.predict_in_sample" class="nav-link" data-scroll-target="#tsb.predict_in_sample">TSB.predict_in_sample</a>
+  <ul class="collapse">
+  <li><a href="#model-description-17" id="toc-model-description-17" class="nav-link" data-scroll-target="#model-description-17">Model description</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a>
+  <ul>
+  <li><a href="#general" id="toc-general" class="nav-link" data-scroll-target="#general"><strong>General</strong></a></li>
+  <li><a href="#for-sparse-or-intermittent-series" id="toc-for-sparse-or-intermittent-series" class="nav-link" data-scroll-target="#for-sparse-or-intermittent-series"><strong>For sparse or intermittent series</strong></a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Nixtla/statsforecast/tree/main/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Models</h1>
+</div>
+
+<div>
+  <div class="description">
+    Uniserie models implementations.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="arima-methods" class="level2">
+<h2 class="anchored" data-anchor-id="arima-methods">ARIMA methods</h2>
+<hr>
+<section id="autoarima" class="level3">
+<h3 class="anchored" data-anchor-id="autoarima">AutoARIMA</h3>
+<blockquote class="blockquote">
+<pre><code> AutoARIMA (d:Optional[int]=None, D:Optional[int]=None, max_p:int=5,
+            max_q:int=5, max_P:int=2, max_Q:int=2, max_order:int=5,
+            max_d:int=2, max_D:int=1, start_p:int=2, start_q:int=2,
+            start_P:int=1, start_Q:int=1, stationary:bool=False,
+            seasonal:bool=True, ic:str='aicc', stepwise:bool=True,
+            nmodels:int=94, trace:bool=False,
+            approximation:Optional[bool]=False, method:Optional[str]=None,
+            truncate:Optional[bool]=None, test:str='kpss',
+            test_kwargs:Optional[str]=None, seasonal_test:str='seas',
+            seasonal_test_kwargs:Optional[Dict]=None,
+            allowdrift:bool=False, allowmean:bool=False,
+            blambda:Optional[float]=None, biasadj:bool=False,
+            parallel:bool=False, num_cores:int=2, season_length:int=1)</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>d</td>
+<td>Optional</td>
+<td>None</td>
+<td>Order of first-differencing</td>
+</tr>
+<tr class="even">
+<td>D</td>
+<td>Optional</td>
+<td>None</td>
+<td>Order of seasonal-differencing</td>
+</tr>
+<tr class="odd">
+<td>max_p</td>
+<td>int</td>
+<td>5</td>
+<td>Maximum value of p</td>
+</tr>
+<tr class="even">
+<td>max_q</td>
+<td>int</td>
+<td>5</td>
+<td>Maximum value of q</td>
+</tr>
+<tr class="odd">
+<td>max_P</td>
+<td>int</td>
+<td>2</td>
+<td>Maximum value fo P</td>
+</tr>
+<tr class="even">
+<td>max_Q</td>
+<td>int</td>
+<td>2</td>
+<td>Maximum value of Q</td>
+</tr>
+<tr class="odd">
+<td>max_order</td>
+<td>int</td>
+<td>5</td>
+<td>Maximum value of p+q+P+Q if model selection is not stepwise</td>
+</tr>
+<tr class="even">
+<td>max_d</td>
+<td>int</td>
+<td>2</td>
+<td>Maximum number of non-seasonal differences</td>
+</tr>
+<tr class="odd">
+<td>max_D</td>
+<td>int</td>
+<td>1</td>
+<td>Maximum number of seasonal differences</td>
+</tr>
+<tr class="even">
+<td>start_p</td>
+<td>int</td>
+<td>2</td>
+<td>Starting value of p in stepwise procedure</td>
+</tr>
+<tr class="odd">
+<td>start_q</td>
+<td>int</td>
+<td>2</td>
+<td>Starting value of q in stepwise procedure</td>
+</tr>
+<tr class="even">
+<td>start_P</td>
+<td>int</td>
+<td>1</td>
+<td>Starting value of P in stepwise procedure</td>
+</tr>
+<tr class="odd">
+<td>start_Q</td>
+<td>int</td>
+<td>1</td>
+<td>Starting value of Q in stepwise procedure</td>
+</tr>
+<tr class="even">
+<td>stationary</td>
+<td>bool</td>
+<td>False</td>
+<td>If True, restricts search to stationary models</td>
+</tr>
+<tr class="odd">
+<td>seasonal</td>
+<td>bool</td>
+<td>True</td>
+<td>If False, restricts search to non-seasonal models</td>
+</tr>
+<tr class="even">
+<td>ic</td>
+<td>str</td>
+<td>aicc</td>
+<td>Information criterion to be used in model selection</td>
+</tr>
+<tr class="odd">
+<td>stepwise</td>
+<td>bool</td>
+<td>True</td>
+<td>If False, searches over all grid (very slow)</td>
+</tr>
+<tr class="even">
+<td>nmodels</td>
+<td>int</td>
+<td>94</td>
+<td>Maximum number of models considered in the stepwise search</td>
+</tr>
+<tr class="odd">
+<td>trace</td>
+<td>bool</td>
+<td>False</td>
+<td>If True, the list of ARIMA models considered will be reported</td>
+</tr>
+<tr class="even">
+<td>approximation</td>
+<td>Optional</td>
+<td>False</td>
+<td>If True, estimation is via conditional sums of squares</td>
+</tr>
+<tr class="odd">
+<td>method</td>
+<td>Optional</td>
+<td>None</td>
+<td>maximum likelihood or minimize conditional sum-of-squares</td>
+</tr>
+<tr class="even">
+<td>truncate</td>
+<td>Optional</td>
+<td>None</td>
+<td>An integer value indicating how many observations to use in model selection</td>
+</tr>
+<tr class="odd">
+<td>test</td>
+<td>str</td>
+<td>kpss</td>
+<td>Type of unit root test to use</td>
+</tr>
+<tr class="even">
+<td>test_kwargs</td>
+<td>Optional</td>
+<td>None</td>
+<td>Additional arguments to be passed to the unit root test</td>
+</tr>
+<tr class="odd">
+<td>seasonal_test</td>
+<td>str</td>
+<td>seas</td>
+<td>Method used to select the number of seasonal differences</td>
+</tr>
+<tr class="even">
+<td>seasonal_test_kwargs</td>
+<td>Optional</td>
+<td>None</td>
+<td>Additional arguments to be passed to the seasonal unit root test</td>
+</tr>
+<tr class="odd">
+<td>allowdrift</td>
+<td>bool</td>
+<td>False</td>
+<td>If True, models with drift terms are considered</td>
+</tr>
+<tr class="even">
+<td>allowmean</td>
+<td>bool</td>
+<td>False</td>
+<td>If True, models with a non-zero mean are considered</td>
+</tr>
+<tr class="odd">
+<td>blambda</td>
+<td>Optional</td>
+<td>None</td>
+<td>Box-Cox transformation parameter</td>
+</tr>
+<tr class="even">
+<td>biasadj</td>
+<td>bool</td>
+<td>False</td>
+<td>Use adjusted back-transformed mean for Box-Cox transformations</td>
+</tr>
+<tr class="odd">
+<td>parallel</td>
+<td>bool</td>
+<td>False</td>
+<td>If True and stepwise = False, then the specification search is done in parallel</td>
+</tr>
+<tr class="even">
+<td>num_cores</td>
+<td>int</td>
+<td>2</td>
+<td>Amount of parallel processes to be used</td>
+</tr>
+<tr class="odd">
+<td>season_length</td>
+<td>int</td>
+<td>1</td>
+<td>Number of observations per cycle</td>
+</tr>
+</tbody>
+</table>
+<p>The <a href="https://Nixtla.github.io/statsforecast/models.html#autoarima"><code>AutoARIMA</code></a> class instantiates the model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>arima <span class="op">=</span> AutoARIMA(season_length<span class="op">=</span><span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="autoarima.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="autoarima.forecast">AutoARIMA.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> AutoARIMA.forecast (y:numpy.ndarray, h:int, X:numpy.ndarray=None,
+                     X_future:numpy.ndarray=None,
+                     level:Optional[Tuple[int]]=None, fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>level</td>
+<td>Optional</td>
+<td>None</td>
+<td>level</td>
+</tr>
+<tr class="even">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<p>Once <a href="https://Nixtla.github.io/statsforecast/models.html#autoarima"><code>AutoARIMA</code></a> is instantiated, you can make forecasts directly using the <a href="https://Nixtla.github.io/statsforecast/models.html#forecast"><code>AutoARIMA.forecast</code></a> method. The purpose of this method is to avoid computational burden due to object storage. This method can be thought of as a <code>fit_predict</code> without storing information. This method assumes you know the forecast horizon in advance. Observe that the method a returns a <code>dict</code> object instead of a numpy array.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsforecast.utils <span class="im">import</span> AirPassengers <span class="im">as</span> ap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>arima.forecast(y<span class="op">=</span>ap, h<span class="op">=</span><span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="autoarima.fit" class="level3">
+<h3 class="anchored" data-anchor-id="autoarima.fit">AutoARIMA.fit</h3>
+<blockquote class="blockquote">
+<pre><code> AutoARIMA.fit (y:numpy.ndarray, X:Optional[numpy.ndarray]=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>Optional</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<p>If you want to store the fitted model for future analysis, you can use the <a href="https://Nixtla.github.io/statsforecast/models.html#fit"><code>AutoARIMA.fit</code></a> method.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>arima <span class="op">=</span> arima.fit(y<span class="op">=</span>ap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="autoarima.predict" class="level3">
+<h3 class="anchored" data-anchor-id="autoarima.predict">AutoARIMA.predict</h3>
+<blockquote class="blockquote">
+<pre><code> AutoARIMA.predict (h:int, X:numpy.ndarray=None,
+                    level:Optional[Tuple[int]]=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="odd">
+<td>level</td>
+<td>Optional</td>
+<td>None</td>
+<td>level</td>
+</tr>
+</tbody>
+</table>
+<p>You can compute forecasts for the fitted model using <a href="https://Nixtla.github.io/statsforecast/models.html#predict"><code>AutoARIMA.predict</code></a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>arima.predict(h<span class="op">=</span><span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="autoarima.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="autoarima.predict_in_sample">AutoARIMA.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> AutoARIMA.predict_in_sample (level:Optional[Tuple[int]]=None)</code></pre>
+</blockquote>
+<p>To obtain the fitted values, you can use <a href="https://Nixtla.github.io/statsforecast/models.html#predict_in_sample"><code>AutoARIMA.predict_in_sample</code></a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>arima.predict_in_sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="model-description" class="level4">
+<h4 class="anchored" data-anchor-id="model-description">Model Description</h4>
+<p><strong>Auto ARIMA</strong>: Automatically selects the best ARIMA (AutoRegressive Integrated Moving Average) model using an information criterion. Default is the corrected Akaike Information Criterion (AICc). Information criterions are tests used to check how well a model fits the data it is trying to describe.</p>
+<p>The ARIMA models are based in the autocorrelations in the data and the autocorrelations of the forecast errors. Every model has three components: AR, I, and MA.</p>
+<p>An AR(p) model captures the autocorrelations in the data at lags <span class="math inline">\(1,2,\dots p\)</span>.</p>
+<p><span class="math display">\[y_t = \beta_0+\beta_1y_{t-1}+\beta_2y_{t-2}+\dots+\beta_py{t_p}+\epsilon_t\]</span></p>
+<p>If the autocorrelations of the forecast errors are added up to lag <span class="math inline">\(q\)</span>, an ARMA(p,q) model is obtained.</p>
+<p><span class="math display">\[y_t = \beta_0+\beta_1y_{t-1}+\beta_2y_{t-2}+\dots+\beta_py{t_p} + \epsilon_t+\theta_1 \epsilon_{t-1}+\theta_2\epsilon_{t-2}+\dots\theta_q\epsilon_{t-q}\]</span></p>
+<p>The last component of an ARIMA model is the integrated (I) part, which is a differencing operation. The order of differencing, denoted by <span class="math inline">\(d\)</span>, indicates how many rounds of lag-1 differencing are performed.</p>
+<p>ARIMA models requiere the user to select <span class="math inline">\(p\)</span>, <span class="math inline">\(q\)</span>, and <span class="math inline">\(d\)</span>. The values for <span class="math inline">\(\beta_i, i=1,2,\dots,p\)</span> and <span class="math inline">\(\theta_j, j=1,2,\dots,q\)</span> are then estimated. Auto ARIMA automatically makes this selection, searching over a range of possible values for <span class="math inline">\(p\)</span>, <span class="math inline">\(q\)</span>, and <span class="math inline">\(d\)</span>, and then choosing the best model using an information criterion.</p>
+</section>
+</section>
+</section>
+<section id="exponential-smoothing-methods" class="level2">
+<h2 class="anchored" data-anchor-id="exponential-smoothing-methods">Exponential smoothing methods</h2>
+<hr>
+<section id="ets" class="level3">
+<h3 class="anchored" data-anchor-id="ets">ETS</h3>
+<blockquote class="blockquote">
+<pre><code> ETS (season_length:int=1, model:str='ZZZ')</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>season_length</td>
+<td>int</td>
+<td>1</td>
+<td>Number of observations per cycle</td>
+</tr>
+<tr class="even">
+<td>model</td>
+<td>str</td>
+<td>ZZZ</td>
+<td>three-character string identifying method using the framework terminology of Hyndman et al.&nbsp;(2002)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="ets.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="ets.forecast">ETS.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> ETS.forecast (y:numpy.ndarray, h:int, X:numpy.ndarray=None,
+               X_future:numpy.ndarray=None, fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="ets.fit" class="level3">
+<h3 class="anchored" data-anchor-id="ets.fit">ETS.fit</h3>
+<blockquote class="blockquote">
+<pre><code> ETS.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="ets.predict" class="level3">
+<h3 class="anchored" data-anchor-id="ets.predict">ETS.predict</h3>
+<blockquote class="blockquote">
+<pre><code> ETS.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="ets.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="ets.predict_in_sample">ETS.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> ETS.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-1" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-1">Model description</h4>
+<p><strong>Error, Trend, and Seasonality</strong>: Statistical models for exponential smoothing. These models are stochastic data generating processes than can produce complete forecast distributions. Each model consists of a set of equations to describe the observed data and the unobserved components or states, which are level, trend, and seasonal. Errors can be either additive or multiplicative. The notation ETS(Z,Z,Z) is used to describe the ETS model being used, where Z can take one of the following values.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Notation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>N = None</td>
+</tr>
+<tr class="even">
+<td>A = Additive</td>
+</tr>
+<tr class="odd">
+<td>Ad = Additive (damped)</td>
+</tr>
+<tr class="even">
+<td>M = Multiplicative</td>
+</tr>
+</tbody>
+</table>
+<p>The possibilities for each state are shown below.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>State</th>
+<th>Possible values</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Error</td>
+<td>A, M</td>
+</tr>
+<tr class="even">
+<td>Trend</td>
+<td>N, A, Ad</td>
+</tr>
+<tr class="odd">
+<td>Seasonal</td>
+<td>N, A, M</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="simpleexponentialsmoothing" class="level3">
+<h3 class="anchored" data-anchor-id="simpleexponentialsmoothing">SimpleExponentialSmoothing</h3>
+<blockquote class="blockquote">
+<pre><code> SimpleExponentialSmoothing (alpha:float)</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>alpha</td>
+<td>float</td>
+<td>smoothing parameter</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="simpleexponentialsmoothing.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="simpleexponentialsmoothing.forecast">SimpleExponentialSmoothing.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> SimpleExponentialSmoothing.forecast (y:numpy.ndarray, h:int,
+                                      X:numpy.ndarray=None,
+                                      X_future:numpy.ndarray=None,
+                                      fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="simpleexponentialsmoothing.fit" class="level3">
+<h3 class="anchored" data-anchor-id="simpleexponentialsmoothing.fit">SimpleExponentialSmoothing.fit</h3>
+<blockquote class="blockquote">
+<pre><code> SimpleExponentialSmoothing.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="simpleexponentialsmoothing.predict" class="level3">
+<h3 class="anchored" data-anchor-id="simpleexponentialsmoothing.predict">SimpleExponentialSmoothing.predict</h3>
+<blockquote class="blockquote">
+<pre><code> SimpleExponentialSmoothing.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="simpleexponentialsmoothing.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="simpleexponentialsmoothing.predict_in_sample">SimpleExponentialSmoothing.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> SimpleExponentialSmoothing.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-2" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-2">Model description</h4>
+<p><strong>Simple (or single) exponential smoothing</strong>: Uses a weighted average of all past observations where the weights decrease exponentially into the past. Suitable for data with no clear trend or seasonality. Assuming there are <span class="math inline">\(t\)</span> observations, the one-step forecast is given by</p>
+<p><span class="math display">\[\hat{y}_{t+1}= \alpha y_{t} + \alpha(1-\alpha)y_{t-1} + \alpha(1-\alpha)^2 y_{t-2} \dots\]</span></p>
+<p>which can also be written as</p>
+<p><span class="math display">\[\hat{y}_{t+1} = \alpha y_t + \alpha(1-\alpha) \hat{y}_{t-1}\]</span></p>
+<p>The rate <span class="math inline">\(0 \leq \alpha \leq 1\)</span> at which the weights decrease is called the smoothing parameter. When <span class="math inline">\(\alpha = 1\)</span>, SES is equal to the naive method.</p>
+<hr>
+</section>
+</section>
+<section id="simpleexponentialsmoothingoptimized" class="level3">
+<h3 class="anchored" data-anchor-id="simpleexponentialsmoothingoptimized">SimpleExponentialSmoothingOptimized</h3>
+<blockquote class="blockquote">
+<pre><code> SimpleExponentialSmoothingOptimized ()</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<hr>
+</section>
+<section id="simpleexponentialsmoothingoptimized.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="simpleexponentialsmoothingoptimized.forecast">SimpleExponentialSmoothingOptimized.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> SimpleExponentialSmoothingOptimized.forecast (y:numpy.ndarray, h:int,
+                                               X:numpy.ndarray=None, X_fut
+                                               ure:numpy.ndarray=None,
+                                               fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="simpleexponentialsmoothingoptimized.fit" class="level3">
+<h3 class="anchored" data-anchor-id="simpleexponentialsmoothingoptimized.fit">SimpleExponentialSmoothingOptimized.fit</h3>
+<blockquote class="blockquote">
+<pre><code> SimpleExponentialSmoothingOptimized.fit (y:numpy.ndarray,
+                                          X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="simpleexponentialsmoothingoptimized.predict" class="level3">
+<h3 class="anchored" data-anchor-id="simpleexponentialsmoothingoptimized.predict">SimpleExponentialSmoothingOptimized.predict</h3>
+<blockquote class="blockquote">
+<pre><code> SimpleExponentialSmoothingOptimized.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="simpleexponentialsmoothingoptimized.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="simpleexponentialsmoothingoptimized.predict_in_sample">SimpleExponentialSmoothingOptimized.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> SimpleExponentialSmoothingOptimized.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-3" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-3">Model description</h4>
+<p><strong>Simple exponential smoothing optimized</strong>: A version of SES where the smoothing parameter <span class="math inline">\(\alpha\)</span> is chosen automatically by minimizing the mean squared error of the fit.</p>
+<hr>
+</section>
+</section>
+<section id="seasonalexponentialsmoothing" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalexponentialsmoothing">SeasonalExponentialSmoothing</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalExponentialSmoothing (season_length:int, alpha:float)</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>season_length</td>
+<td>int</td>
+<td>Number of observations per cycle</td>
+</tr>
+<tr class="even">
+<td>alpha</td>
+<td>float</td>
+<td>smoothing parameter shared across seasonalities</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalexponentialsmoothing.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalexponentialsmoothing.forecast">SeasonalExponentialSmoothing.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalExponentialSmoothing.forecast (y:numpy.ndarray, h:int,
+                                        X:numpy.ndarray=None,
+                                        X_future:numpy.ndarray=None,
+                                        fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalexponentialsmoothing.fit" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalexponentialsmoothing.fit">SeasonalExponentialSmoothing.fit</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalExponentialSmoothing.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalexponentialsmoothing.predict" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalexponentialsmoothing.predict">SeasonalExponentialSmoothing.predict</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalExponentialSmoothing.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalexponentialsmoothing.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalexponentialsmoothing.predict_in_sample">SeasonalExponentialSmoothing.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalExponentialSmoothing.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-4" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-4">Model description</h4>
+<p><strong>Seasonal exponential smoothing</strong>: A seasonal version of exponential smoothing. A simple exponential smoothing is fitted for each seasonality using the smoothing parameter <span class="math inline">\(\alpha\)</span>.</p>
+<hr>
+</section>
+</section>
+<section id="seasonalexponentialsmoothingoptimized" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalexponentialsmoothingoptimized">SeasonalExponentialSmoothingOptimized</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalExponentialSmoothingOptimized (season_length:int)</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>season_length</td>
+<td>int</td>
+<td>Number of observations per cycle</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalexponentialsmoothingoptimized.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalexponentialsmoothingoptimized.forecast">SeasonalExponentialSmoothingOptimized.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalExponentialSmoothingOptimized.forecast (y:numpy.ndarray, h:int,
+                                                 X:numpy.ndarray=None, X_f
+                                                 uture:numpy.ndarray=None,
+                                                 fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalexponentialsmoothingoptimized.fit" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalexponentialsmoothingoptimized.fit">SeasonalExponentialSmoothingOptimized.fit</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalExponentialSmoothingOptimized.fit (y:numpy.ndarray,
+                                            X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalexponentialsmoothingoptimized.predict" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalexponentialsmoothingoptimized.predict">SeasonalExponentialSmoothingOptimized.predict</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalExponentialSmoothingOptimized.predict (h:int,
+                                                X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalexponentialsmoothingoptimized.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalexponentialsmoothingoptimized.predict_in_sample">SeasonalExponentialSmoothingOptimized.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalExponentialSmoothingOptimized.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-5" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-5">Model description</h4>
+<p><strong>Seasonal SES optimized</strong>: A seasonal version of SES optimized</p>
+</section>
+</section>
+</section>
+<section id="simple-methods" class="level2">
+<h2 class="anchored" data-anchor-id="simple-methods">Simple methods</h2>
+<hr>
+<section id="historicaverage" class="level3">
+<h3 class="anchored" data-anchor-id="historicaverage">HistoricAverage</h3>
+<blockquote class="blockquote">
+<pre><code> HistoricAverage ()</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<hr>
+</section>
+<section id="historicaverage.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="historicaverage.forecast">HistoricAverage.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> HistoricAverage.forecast (y:numpy.ndarray, h:int, X:numpy.ndarray=None,
+                           X_future:numpy.ndarray=None, fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="historicaverage.fit" class="level3">
+<h3 class="anchored" data-anchor-id="historicaverage.fit">HistoricAverage.fit</h3>
+<blockquote class="blockquote">
+<pre><code> HistoricAverage.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="historicaverage.predict" class="level3">
+<h3 class="anchored" data-anchor-id="historicaverage.predict">HistoricAverage.predict</h3>
+<blockquote class="blockquote">
+<pre><code> HistoricAverage.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="historicaverage.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="historicaverage.predict_in_sample">HistoricAverage.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> HistoricAverage.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-6" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-6">Model description</h4>
+<p><strong>Historic average:</strong> Also known as mean method. Uses a simple average of all past observations. Assuming there are <span class="math inline">\(t\)</span> observations, the one-step forecast is given by</p>
+<p><span class="math display">\[ \hat{y}_{t+1} = \frac{1}{t} \sum_{j=1}^t y_j \]</span></p>
+<hr>
+</section>
+</section>
+<section id="naive" class="level3">
+<h3 class="anchored" data-anchor-id="naive">Naive</h3>
+<blockquote class="blockquote">
+<pre><code> Naive ()</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<hr>
+</section>
+<section id="naive.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="naive.forecast">Naive.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> Naive.forecast (y:numpy.ndarray, h:int, X:numpy.ndarray=None,
+                 X_future:numpy.ndarray=None, fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="naive.fit" class="level3">
+<h3 class="anchored" data-anchor-id="naive.fit">Naive.fit</h3>
+<blockquote class="blockquote">
+<pre><code> Naive.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="naive.predict" class="level3">
+<h3 class="anchored" data-anchor-id="naive.predict">Naive.predict</h3>
+<blockquote class="blockquote">
+<pre><code> Naive.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="naive.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="naive.predict_in_sample">Naive.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> Naive.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-7" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-7">Model description</h4>
+<p><strong>Naive</strong>: A random walk model, defined as</p>
+<p><span class="math display">\[ \hat{y}_{t+1} = y_t \]</span></p>
+<hr>
+</section>
+</section>
+<section id="randomwalkwithdrift" class="level3">
+<h3 class="anchored" data-anchor-id="randomwalkwithdrift">RandomWalkWithDrift</h3>
+<blockquote class="blockquote">
+<pre><code> RandomWalkWithDrift ()</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<hr>
+</section>
+<section id="randomwalkwithdrift.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="randomwalkwithdrift.forecast">RandomWalkWithDrift.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> RandomWalkWithDrift.forecast (y:numpy.ndarray, h:int,
+                               X:numpy.ndarray=None,
+                               X_future:numpy.ndarray=None,
+                               fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="randomwalkwithdrift.fit" class="level3">
+<h3 class="anchored" data-anchor-id="randomwalkwithdrift.fit">RandomWalkWithDrift.fit</h3>
+<blockquote class="blockquote">
+<pre><code> RandomWalkWithDrift.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="randomwalkwithdrift.predict" class="level3">
+<h3 class="anchored" data-anchor-id="randomwalkwithdrift.predict">RandomWalkWithDrift.predict</h3>
+<blockquote class="blockquote">
+<pre><code> RandomWalkWithDrift.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="randomwalkwithdrift.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="randomwalkwithdrift.predict_in_sample">RandomWalkWithDrift.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> RandomWalkWithDrift.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-8" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-8">Model description</h4>
+<p><strong>Random walk with drift</strong>: A variation of the naive method allows the forecasts to change over time. The amout of change, called drift, is the average change seen in the historical data.</p>
+<p><span class="math display">\[ \hat{y}_{t+1} = y_t+\frac{1}{t-1}\sum_{j=1}^t (y_j-y_{j-1}) = y_t+ \frac{y_t-y_1}{t-1} \]</span></p>
+<p>From the previous equation, we can see that this is equivalent to extrapolating a line between the first and the last observation.</p>
+<hr>
+</section>
+</section>
+<section id="seasonalnaive" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalnaive">SeasonalNaive</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalNaive (season_length:int)</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>season_length</td>
+<td>int</td>
+<td>Number of observations per cycle</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalnaive.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalnaive.forecast">SeasonalNaive.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalNaive.forecast (y:numpy.ndarray, h:int, X:numpy.ndarray=None,
+                         X_future:numpy.ndarray=None, fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalnaive.fit" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalnaive.fit">SeasonalNaive.fit</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalNaive.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalnaive.predict" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalnaive.predict">SeasonalNaive.predict</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalNaive.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalnaive.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalnaive.predict_in_sample">SeasonalNaive.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalNaive.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-9" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-9">Model description</h4>
+<p><strong>Seasonal naive</strong>: Similar to the naive method, but uses the last known observation of the same period (e.g.&nbsp;the same month of the previous year) in order to capture seasonal variations.</p>
+<hr>
+</section>
+</section>
+<section id="windowaverage" class="level3">
+<h3 class="anchored" data-anchor-id="windowaverage">WindowAverage</h3>
+<blockquote class="blockquote">
+<pre><code> WindowAverage (window_size:int)</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>window_size</td>
+<td>int</td>
+<td>last observations used to compute average</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="windowaverage.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="windowaverage.forecast">WindowAverage.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> WindowAverage.forecast (y:numpy.ndarray, h:int, X:numpy.ndarray=None,
+                         X_future:numpy.ndarray=None, fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="windowaverage.fit" class="level3">
+<h3 class="anchored" data-anchor-id="windowaverage.fit">WindowAverage.fit</h3>
+<blockquote class="blockquote">
+<pre><code> WindowAverage.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="windowaverage.predict" class="level3">
+<h3 class="anchored" data-anchor-id="windowaverage.predict">WindowAverage.predict</h3>
+<blockquote class="blockquote">
+<pre><code> WindowAverage.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="windowaverage.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="windowaverage.predict_in_sample">WindowAverage.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> WindowAverage.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-10" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-10">Model description</h4>
+<p><strong>Window average</strong>: Uses the average of the last <span class="math inline">\(k\)</span> observations, with <span class="math inline">\(k\)</span> the length of the window. Wider windows will capture global trends, while narrow windows will reveal local trends. The length of the window selected should take into account the importance of past observations and how fast the series changes.</p>
+<hr>
+</section>
+</section>
+<section id="seasonalwindowaverage" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalwindowaverage">SeasonalWindowAverage</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalWindowAverage (season_length:int, window_size:int)</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 38%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>season_length</td>
+<td>int</td>
+<td>Number of observations per cycle</td>
+</tr>
+<tr class="even">
+<td>window_size</td>
+<td>int</td>
+<td>Last observations per seasonality to compute average</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalwindowaverage.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalwindowaverage.forecast">SeasonalWindowAverage.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalWindowAverage.forecast (y:numpy.ndarray, h:int,
+                                 X:numpy.ndarray=None,
+                                 X_future:numpy.ndarray=None,
+                                 fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalwindowaverage.fit" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalwindowaverage.fit">SeasonalWindowAverage.fit</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalWindowAverage.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalwindowaverage.predict" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalwindowaverage.predict">SeasonalWindowAverage.predict</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalWindowAverage.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="seasonalwindowaverage.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="seasonalwindowaverage.predict_in_sample">SeasonalWindowAverage.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> SeasonalWindowAverage.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-11" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-11">Model description</h4>
+<p><strong>Seasonal window average</strong>: An average of the last <span class="math inline">\(k\)</span> observations of the same period, with <span class="math inline">\(k\)</span> the length of the window.</p>
+</section>
+</section>
+</section>
+<section id="sparse-or-intermittent-series" class="level2">
+<h2 class="anchored" data-anchor-id="sparse-or-intermittent-series">Sparse or intermittent series</h2>
+<p>Sparse or intermittent series are series with very few non-zero observations. They are notoriously hard to forecast, and so, different methods have been developed especifically for them. Before the development of Croston’s method and its variants, SES was usually used to forecast them.</p>
+<hr>
+<section id="adida" class="level3">
+<h3 class="anchored" data-anchor-id="adida">ADIDA</h3>
+<blockquote class="blockquote">
+<pre><code> ADIDA ()</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<hr>
+</section>
+<section id="adida.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="adida.forecast">ADIDA.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> ADIDA.forecast (y:numpy.ndarray, h:int, X:numpy.ndarray=None,
+                 X_future:numpy.ndarray=None, fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="adida.fit" class="level3">
+<h3 class="anchored" data-anchor-id="adida.fit">ADIDA.fit</h3>
+<blockquote class="blockquote">
+<pre><code> ADIDA.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="adida.predict" class="level3">
+<h3 class="anchored" data-anchor-id="adida.predict">ADIDA.predict</h3>
+<blockquote class="blockquote">
+<pre><code> ADIDA.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="adida.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="adida.predict_in_sample">ADIDA.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> ADIDA.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-12" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-12">Model description</h4>
+<p><strong>Aggregate-Dissagregate Intermittent Demand Approach</strong>: Uses temporal aggregation to reduce the number of zero observations. Once the data has been agregated, it uses the optimized SES to generate the forecasts at the new level. It then breaks down the forecast to the original level using equal weights.</p>
+<hr>
+</section>
+</section>
+<section id="crostonclassic" class="level3">
+<h3 class="anchored" data-anchor-id="crostonclassic">CrostonClassic</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonClassic ()</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<hr>
+</section>
+<section id="crostonclassic.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="crostonclassic.forecast">CrostonClassic.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonClassic.forecast (y:numpy.ndarray, h:int, X:numpy.ndarray=None,
+                          X_future:numpy.ndarray=None, fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="crostonclassic.fit" class="level3">
+<h3 class="anchored" data-anchor-id="crostonclassic.fit">CrostonClassic.fit</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonClassic.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="crostonclassic.predict" class="level3">
+<h3 class="anchored" data-anchor-id="crostonclassic.predict">CrostonClassic.predict</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonClassic.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="crostonclassic.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="crostonclassic.predict_in_sample">CrostonClassic.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonClassic.predict_in_sample (level)</code></pre>
+</blockquote>
+<section id="model-description-13" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-13">Model description</h4>
+<p><strong>Croston classic</strong>: A method to forecast time series that exhibit intermittent demand. It decomposes the original time series into a non-zero demand size <span class="math inline">\(z_t\)</span> and inter-demand intervals <span class="math inline">\(p_t\)</span>. Then the forecast is given by</p>
+<p><span class="math display">\[ \hat{y}_t = \frac{\hat{z}_t}{\hat{p}_t} \]</span></p>
+<p>where <span class="math inline">\(\hat{z}_t\)</span> and <span class="math inline">\(\hat{p}_t\)</span> are forecasted using SES. The smoothing parameter of both components is set equal to 0.1</p>
+<hr>
+</section>
+</section>
+<section id="crostonoptimized" class="level3">
+<h3 class="anchored" data-anchor-id="crostonoptimized">CrostonOptimized</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonOptimized ()</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<hr>
+</section>
+<section id="crostonoptimized.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="crostonoptimized.forecast">CrostonOptimized.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonOptimized.forecast (y:numpy.ndarray, h:int, X:numpy.ndarray=None,
+                            X_future:numpy.ndarray=None,
+                            fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="crostonoptimized.fit" class="level3">
+<h3 class="anchored" data-anchor-id="crostonoptimized.fit">CrostonOptimized.fit</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonOptimized.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="crostonoptimized.predict" class="level3">
+<h3 class="anchored" data-anchor-id="crostonoptimized.predict">CrostonOptimized.predict</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonOptimized.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="crostonoptimized.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="crostonoptimized.predict_in_sample">CrostonOptimized.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonOptimized.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-14" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-14">Model description</h4>
+<p><strong>Croston Optimized</strong>: A variation of the classic Croston’s method where the smooting paramater is optimally selected from the range <span class="math inline">\([0.1,0.3]\)</span>. Both the non-zero demand <span class="math inline">\(z_t\)</span> and the inter-demand intervals <span class="math inline">\(p_t\)</span> are smoothed separately, so their smoothing parameters can be different.</p>
+<hr>
+</section>
+</section>
+<section id="crostonsba" class="level3">
+<h3 class="anchored" data-anchor-id="crostonsba">CrostonSBA</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonSBA ()</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<hr>
+</section>
+<section id="crostonsba.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="crostonsba.forecast">CrostonSBA.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonSBA.forecast (y:numpy.ndarray, h:int, X:numpy.ndarray=None,
+                      X_future:numpy.ndarray=None, fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="crostonsba.fit" class="level3">
+<h3 class="anchored" data-anchor-id="crostonsba.fit">CrostonSBA.fit</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonSBA.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td># exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="crostonsba.predict" class="level3">
+<h3 class="anchored" data-anchor-id="crostonsba.predict">CrostonSBA.predict</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonSBA.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="crostonsba.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="crostonsba.predict_in_sample">CrostonSBA.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> CrostonSBA.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-15" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-15">Model description</h4>
+<p><strong>Croston with Syntetos-Boylan Approximation</strong>: A variation of the classic Croston’s method that uses a debiasing factor, so that the forecast is given by</p>
+<p><span class="math display">\[ \hat{y}_t = 0.95  \frac{\hat{z}_t}{\hat{p}_t} \]</span></p>
+<hr>
+</section>
+</section>
+<section id="imapa" class="level3">
+<h3 class="anchored" data-anchor-id="imapa">IMAPA</h3>
+<blockquote class="blockquote">
+<pre><code> IMAPA ()</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<hr>
+</section>
+<section id="imapa.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="imapa.forecast">IMAPA.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> IMAPA.forecast (y:numpy.ndarray, h:int, X:numpy.ndarray=None,
+                 X_future:numpy.ndarray=None, fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="imapa.fit" class="level3">
+<h3 class="anchored" data-anchor-id="imapa.fit">IMAPA.fit</h3>
+<blockquote class="blockquote">
+<pre><code> IMAPA.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="imapa.predict" class="level3">
+<h3 class="anchored" data-anchor-id="imapa.predict">IMAPA.predict</h3>
+<blockquote class="blockquote">
+<pre><code> IMAPA.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="imapa.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="imapa.predict_in_sample">IMAPA.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> IMAPA.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-16" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-16">Model description</h4>
+<p><strong>Intermittent Multiple Aggregation Prediction Algorithm</strong>: Similar to ADIDA, but instead of using a single aggregation level, it considers multiple in order to capture different dynamics of the data. Uses the optimized SES to generate the forecasts at the new levels and then combines them using a simple average.</p>
+<hr>
+</section>
+</section>
+<section id="tsb" class="level3">
+<h3 class="anchored" data-anchor-id="tsb">TSB</h3>
+<blockquote class="blockquote">
+<pre><code> TSB (alpha_d:float, alpha_p:float)</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>alpha_d</td>
+<td>float</td>
+<td>smoothing parameter for demand</td>
+</tr>
+<tr class="even">
+<td>alpha_p</td>
+<td>float</td>
+<td>smoothing parameter for probability</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="tsb.forecast" class="level3">
+<h3 class="anchored" data-anchor-id="tsb.forecast">TSB.forecast</h3>
+<blockquote class="blockquote">
+<pre><code> TSB.forecast (y:numpy.ndarray, h:int, X:numpy.ndarray=None,
+               X_future:numpy.ndarray=None, fitted:bool=False)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+<tr class="even">
+<td>X_future</td>
+<td>ndarray</td>
+<td>None</td>
+<td>future regressors</td>
+</tr>
+<tr class="odd">
+<td>fitted</td>
+<td>bool</td>
+<td>False</td>
+<td>return fitted values?</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="tsb.fit" class="level3">
+<h3 class="anchored" data-anchor-id="tsb.fit">TSB.fit</h3>
+<blockquote class="blockquote">
+<pre><code> TSB.fit (y:numpy.ndarray, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>ndarray</td>
+<td></td>
+<td>time series</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="tsb.predict" class="level3">
+<h3 class="anchored" data-anchor-id="tsb.predict">TSB.predict</h3>
+<blockquote class="blockquote">
+<pre><code> TSB.predict (h:int, X:numpy.ndarray=None)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>h</td>
+<td>int</td>
+<td></td>
+<td>forecasting horizon</td>
+</tr>
+<tr class="even">
+<td>X</td>
+<td>ndarray</td>
+<td>None</td>
+<td>exogenous regressors</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="tsb.predict_in_sample" class="level3">
+<h3 class="anchored" data-anchor-id="tsb.predict_in_sample">TSB.predict_in_sample</h3>
+<blockquote class="blockquote">
+<pre><code> TSB.predict_in_sample ()</code></pre>
+</blockquote>
+<section id="model-description-17" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-17">Model description</h4>
+<p><strong>Teunter-Syntetos-Babai</strong>: A modification of Croston’s method that replaces the inter-demand intervals with the demand probability <span class="math inline">\(d_t\)</span>, which is defined as follows.</p>
+<p><span class="math display">\[
+d_t = \begin{cases}
+    1  &amp; \text{if demand occurs at time t}\\
+    0 &amp; \text{otherwise.}
+\end{cases}
+\]</span></p>
+<p>Hence, the forecast is given by</p>
+<p><span class="math display">\[\hat{y}_t= \hat{d}_t\hat{z_t}\]</span></p>
+<p>Both <span class="math inline">\(d_t\)</span> and <span class="math inline">\(z_t\)</span> are forecasted using SES. The smooting paramaters of each may differ, like in the optimized Croston’s method.</p>
+</section>
+</section>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<section id="general" class="level4">
+<h4 class="anchored" data-anchor-id="general"><strong>General</strong></h4>
+<ul>
+<li><p>Hyndman, R.J., &amp; Athanasopoulos, G. (2021) Forecasting: principles and practice, 3rd edition, OTexts: Melbourne, Australia. <a href="https://otexts.com/fpp3/">OTexts.com/fpp3</a>. Accessed on July 2022.</p></li>
+<li><p>Shmueli, G., &amp; Lichtendahl Jr, K. C. (2016). Practical time series forecasting with r: A hands-on guide. Axelrod Schnall Publishers.</p></li>
+</ul>
+</section>
+<section id="for-sparse-or-intermittent-series" class="level4">
+<h4 class="anchored" data-anchor-id="for-sparse-or-intermittent-series"><strong>For sparse or intermittent series</strong></h4>
+<ul>
+<li><p><a href="https://link.springer.com/article/10.1057/jors.1972.50">Croston, J. D. (1972). Forecasting and stock control for intermittent demands. Journal of the Operational Research Society, 23(3), 289-303.</a></p></li>
+<li><p><a href="https://researchportal.bath.ac.uk/en/publications/an-aggregate-disaggregate-intermittent-demand-approach-adida-to-f">Nikolopoulos, K., Syntetos, A. A., Boylan, J. E., Petropoulos, F., &amp; Assimakopoulos, V. (2011). An aggregate–disaggregate intermittent demand approach (ADIDA) to forecasting: an empirical proposition and analysis. Journal of the Operational Research Society, 62(3), 544-554.</a></p></li>
+<li><p><a href="https://www.academia.edu/1527250/The_accuracy_of_intermittent_demand_estimates">Syntetos, A. A., &amp; Boylan, J. E. (2005). The accuracy of intermittent demand estimates. International Journal of forecasting, 21(2), 303-314.</a></p></li>
+<li><p>Syntetos, A. A., &amp; Boylan, J. E. (2021). Intermittent demand forecasting: Context, methods and applications. John Wiley &amp; Sons.</p></li>
+<li><p><a href="https://www.sciencedirect.com/science/article/abs/pii/S0377221711004437">Teunter, R. H., Syntetos, A. A., &amp; Babai, M. Z. (2011). Intermittent demand: Linking forecasting to inventory obsolescence. European Journal of Operational Research, 214(3), 606-615.</a></p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsforecast.utils <span class="im">import</span> AirPassengers <span class="im">as</span> ap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>arima <span class="op">=</span> AutoARIMA(season_length<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>arima <span class="op">=</span> arima.fit(ap)</span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>arima.predict(<span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>ets <span class="op">=</span> ETS(season_length<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>ets <span class="op">=</span> ets.fit(ap)</span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>ets.predict(<span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>External regressors</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>drift <span class="op">=</span> np.arange(<span class="dv">1</span>, ap.size <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.vstack([np.log(drift), np.sqrt(drift)]).T</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a>newdrift <span class="op">=</span> np.arange(ap.size <span class="op">+</span> <span class="dv">1</span>, ap.size <span class="op">+</span> <span class="dv">7</span> <span class="op">+</span> <span class="dv">1</span>).reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>newxreg <span class="op">=</span> np.concatenate([np.log(newdrift), np.sqrt(newdrift)], axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a>arima <span class="op">=</span> AutoARIMA(season_length<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a>arima <span class="op">=</span> arima.fit(y<span class="op">=</span>ap, X<span class="op">=</span>X)</span>
+<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>arima.predict(<span class="dv">12</span>, X<span class="op">=</span>newxreg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Confidence intervals</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(arima.predict(<span class="dv">12</span>, X<span class="op">=</span>newxreg, level<span class="op">=</span>(<span class="dv">80</span>, <span class="dv">50</span>, <span class="dv">95</span>))).plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

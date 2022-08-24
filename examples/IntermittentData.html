@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.75">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>statsforecast - Forecasting Intermitent Time Series</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: 1;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="statsforecast - Forecasting Intermitent Time Series">
+<meta property="og:description" content="Sparse or intermittent series are series with very few non-zero observations. They are notoriously hard to forecast, and so, different methods have been developed especifically for them.">
+<meta property="og:site-name" content="statsforecast">
+<meta name="twitter:title" content="statsforecast - Forecasting Intermitent Time Series">
+<meta name="twitter:description" content="Sparse or intermittent series are series with very few non-zero observations. They are notoriously hard to forecast, and so, different methods have been developed especifically for them.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">statsforecast</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../examples/Getting_Started_with_Auto_Arima_and_ETS.html" aria-current="page">Get Started</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/Nixtla/statsforecast/tree/main/experiments">Experiments</a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-help" role="button" data-bs-toggle="dropdown" aria-expanded="false">Help</a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-help">    
+        <li>
+    <a class="dropdown-item" href="https://github.com/nixtla/statsforecast/issues"><i class="bi bi-bug" role="img">
+</i> 
+ <span class="dropdown-text">Report an Issue</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://join.slack.com/t/nixtlaworkspace/shared_invite/zt-135dssye9-fWTzMpv2WBthq8NK0Yvu6A"><i class="bi bi-chat-right-text" role="img">
+</i> 
+ <span class="dropdown-text">Slack Nixtla</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Nixtla/statsforecast/tree/main/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/nixtlainc"><i class="bi bi-twitter" role="img" aria-label="Nixtla Twitter">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Forecasting Intermitent Time Series</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Statistical ⚡️ Forecast</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/Getting_Started_with_Auto_Arima_and_ETS.html" class="sidebar-item-text sidebar-link">Getting Started with AutoARIMA and ETS</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/Installation.html" class="sidebar-item-text sidebar-link">Installation</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Reference</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../core.html" class="sidebar-item-text sidebar-link">Core</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models.html" class="sidebar-item-text sidebar-link">Models</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../utils.html" class="sidebar-item-text sidebar-link">Utils</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../adapters.prophet.html" class="sidebar-item-text sidebar-link">Adapters for Prophet</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">Distributed</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../distributed.fugue.html" class="sidebar-item-text sidebar-link">Fugue Backend</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../distributed.ray.html" class="sidebar-item-text sidebar-link">Ray Backend</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../distributed.multiprocess.html" class="sidebar-item-text sidebar-link">Multiprocess Backend</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../distributed.utils.html" class="sidebar-item-text sidebar-link">Distributed utils</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/AutoArima_vs_Prophet.html" class="sidebar-item-text sidebar-link">AutoARIMA Comparison (Prophet and pmdarima)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/CrossValidation.html" class="sidebar-item-text sidebar-link">Cross-validation for Time Series</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/IntermittentData.html" class="sidebar-item-text sidebar-link active">Forecasting Intermitent Time Series</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/Exogenous.html" class="sidebar-item-text sidebar-link">Exogenous Regressors</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/UncertaintyIntervals.html" class="sidebar-item-text sidebar-link">Prediction Intervals</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/Outliers.html" class="sidebar-item-text sidebar-link">Outliers</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/NonDailyData.html" class="sidebar-item-text sidebar-link">Non Daily Data</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/ForecastingAtScale.html" class="sidebar-item-text sidebar-link">Forecasting at Scale</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/Contributing.html" class="sidebar-item-text sidebar-link">How to Contribute</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#installing-statsforecast-library" id="toc-installing-statsforecast-library" class="nav-link active" data-scroll-target="#installing-statsforecast-library">Installing StatsForecast Library</a>
+  <ul>
+  <li><a href="#plot-functions" id="toc-plot-functions" class="nav-link" data-scroll-target="#plot-functions">Plot functions</a></li>
+  </ul></li>
+  <li><a href="#loading-and-exploring-the-m5-dataset" id="toc-loading-and-exploring-the-m5-dataset" class="nav-link" data-scroll-target="#loading-and-exploring-the-m5-dataset">Loading and Exploring the M5 Dataset</a>
+  <ul>
+  <li><a href="#prepare-dataset-for-statsforecast-modelling" id="toc-prepare-dataset-for-statsforecast-modelling" class="nav-link" data-scroll-target="#prepare-dataset-for-statsforecast-modelling">Prepare dataset for StatsForecast modelling</a>
+  <ul class="collapse">
+  <li><a href="#create-a-subset-of-the-dataset" id="toc-create-a-subset-of-the-dataset" class="nav-link" data-scroll-target="#create-a-subset-of-the-dataset">Create a subset of the dataset</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#modelling-intermitent-data" id="toc-modelling-intermitent-data" class="nav-link" data-scroll-target="#modelling-intermitent-data">Modelling intermitent data</a></li>
+  <li><a href="#model-evaluation" id="toc-model-evaluation" class="nav-link" data-scroll-target="#model-evaluation">Model Evaluation</a>
+  <ul>
+  <li><a href="#quantitative-evaluation" id="toc-quantitative-evaluation" class="nav-link" data-scroll-target="#quantitative-evaluation">Quantitative evaluation</a></li>
+  <li><a href="#plotting-predictions" id="toc-plotting-predictions" class="nav-link" data-scroll-target="#plotting-predictions">Plotting predictions</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Nixtla/statsforecast/tree/main/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Forecasting Intermitent Time Series</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p><a href="https://colab.research.google.com/github/Nixtla/statsforecast/blob/main/nbs/examples/IntermittentData.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p>Sparse or intermittent series are series with very few non-zero observations. They are notoriously hard to forecast, and so, different methods have been developed especifically for them.</p>
+<p>In this notebook we’ll implement and benchmark some of the most popular methods for intermitent forecast using the <a href="https://nixtla.github.io/statsforecast/">StatsForecast</a> library.</p>
+<section id="installing-statsforecast-library" class="level2">
+<h2 class="anchored" data-anchor-id="installing-statsforecast-library">Installing StatsForecast Library</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">-</span>U numba</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">-</span>U statsmodels</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install statsforecast</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install neuralforecast</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> neuralforecast.data.datasets <span class="im">import</span> m5</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsforecast <span class="im">import</span> StatsForecast</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsforecast.models <span class="im">import</span> (</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    ADIDA, CrostonClassic, CrostonOptimized,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    CrostonSBA, IMAPA, TSB, ETS, AutoARIMA</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">"figure.figsize"</span>] <span class="op">=</span> (<span class="dv">9</span>,<span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="plot-functions" class="level3">
+<h3 class="anchored" data-anchor-id="plot-functions">Plot functions</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_grid(df_train, plot_titles, model_cols<span class="op">=</span>[<span class="st">"y_50"</span>], df_test<span class="op">=</span><span class="va">None</span>, plot_random<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plots multiple time series."""</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    fig, axes <span class="op">=</span> plt.subplots(<span class="dv">4</span>, <span class="dv">2</span>, figsize <span class="op">=</span> (<span class="dv">24</span>, <span class="dv">14</span>))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    unique_ids <span class="op">=</span> df_train[<span class="st">'unique_id'</span>].unique()</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> <span class="bu">len</span>(unique_ids) <span class="op">&gt;=</span> <span class="dv">8</span>, <span class="st">"Must provide at least 8 ts"</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> plot_random:</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        unique_ids <span class="op">=</span> random.sample(<span class="bu">list</span>(unique_ids), k<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        unique_uids <span class="op">=</span> unique_ids[:<span class="dv">8</span>]</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> uid, (idx, idy) <span class="kw">in</span> <span class="bu">zip</span>(unique_ids, product(<span class="bu">range</span>(<span class="dv">4</span>), <span class="bu">range</span>(<span class="dv">2</span>))):</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        train_uid <span class="op">=</span> df_train.query(<span class="st">'unique_id == @uid'</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        axes[idx, idy].plot(train_uid[<span class="st">'ds'</span>], train_uid[<span class="st">'y'</span>], label <span class="op">=</span> <span class="st">'y_train'</span>, c<span class="op">=</span><span class="st">'black'</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        axes[idx, idy].xaxis.set_tick_params(rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> df_test <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>            max_ds <span class="op">=</span> train_uid[<span class="st">'ds'</span>].<span class="bu">max</span>()</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            test_uid <span class="op">=</span> df_test.query(<span class="st">'unique_id == @uid'</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            axes[idx, idy].plot(test_uid[<span class="st">'ds'</span>], test_uid[<span class="st">'y'</span>], c<span class="op">=</span><span class="st">'black'</span>, label<span class="op">=</span><span class="st">'True'</span>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> col <span class="kw">in</span> model_cols:</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>                axes[idx, idy].plot(test_uid[<span class="st">'ds'</span>], test_uid[col], label<span class="op">=</span>col)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        axes[idx, idy].set_title(<span class="ss">f'State: </span><span class="sc">{</span>plot_titles[uid]<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        axes[idx, idy].set_xlabel(<span class="st">'Timestamp [t]'</span>)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        axes[idx, idy].set_ylabel(<span class="st">'Target'</span>)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        axes[idx, idy].legend(loc<span class="op">=</span><span class="st">'upper left'</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>        axes[idx, idy].xaxis.set_major_locator(plt.MaxNLocator(<span class="dv">20</span>))</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>        axes[idx, idy].grid()</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    fig.subplots_adjust(hspace<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="loading-and-exploring-the-m5-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="loading-and-exploring-the-m5-dataset">Loading and Exploring the M5 Dataset</h2>
+<p>The <a href="https://en.wikipedia.org/wiki/Makridakis_Competitions">M5 dataset</a> consists of real-life data from Walmart and was used on a competition conducted on Kaggle. The data consists of around 42,000 hierarchical daily time series, starting at the level of SKUs and ending with the total demand of some large geographical area.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Y_df_total, <span class="op">*</span>_ <span class="op">=</span> m5.M5.load(<span class="st">'./data'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(Y_df_total[<span class="st">'unique_id'</span>].nunique())</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>Y_df_total.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>30490</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>unique_id</th>
+      <th>ds</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>FOODS_1_001_CA_1</td>
+      <td>2011-01-29</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>FOODS_1_001_CA_1</td>
+      <td>2011-01-30</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>FOODS_1_001_CA_1</td>
+      <td>2011-01-31</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>FOODS_1_001_CA_1</td>
+      <td>2011-02-01</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>FOODS_1_001_CA_1</td>
+      <td>2011-02-02</td>
+      <td>4.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<section id="prepare-dataset-for-statsforecast-modelling" class="level3">
+<h3 class="anchored" data-anchor-id="prepare-dataset-for-statsforecast-modelling">Prepare dataset for StatsForecast modelling</h3>
+<section id="create-a-subset-of-the-dataset" class="level4">
+<h4 class="anchored" data-anchor-id="create-a-subset-of-the-dataset">Create a subset of the dataset</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ids <span class="op">=</span> random.sample(<span class="bu">list</span>(Y_df_total[<span class="st">'unique_id'</span>].unique()), <span class="dv">100</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>Y_df <span class="op">=</span> Y_df_total.query(<span class="st">'unique_id in @ids'</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>Y_df[<span class="st">"unique_id"</span>] <span class="op">=</span> Y_df[<span class="st">"unique_id"</span>].astype(<span class="bu">str</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>Y_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>unique_id</th>
+      <th>ds</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>573344</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2011-01-29</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>573345</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2011-01-30</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>573346</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2011-01-31</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>573347</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2011-02-01</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>573348</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2011-02-02</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plot_titles <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(ids, ids))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>plot_grid(Y_df, plot_titles<span class="op">=</span>plot_titles)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="IntermittentData_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="modelling-intermitent-data" class="level2">
+<h2 class="anchored" data-anchor-id="modelling-intermitent-data">Modelling intermitent data</h2>
+<ul>
+<li><strong>ADIDA</strong>: Temporal aggregation is used for reducing the presence of zero observations, thus mitigating the undesirable effect of the variance observed in the intervals. ADIDA uses equally sized time buckets to perform non-overlapping temporal aggregation and predict the demand over a pre-specified lead-time.</li>
+<li><strong>iMAPA</strong>: iMAPA stands for Intermittent Multiple Aggregation Prediction Algorithm. Another way for implementing temporal aggregation in demand forecasting. However, in contrast to ADIDA that considers a single aggregation level, iMAPA considers multiple ones, aiming at capturing different dynamics of the data</li>
+<li><strong>TSB</strong>: TSB stands for Teunter-Syntetos-Babai. A modification to Croston’s method that replaces the inter-demand intervals component with the demand probability.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Split train test</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>Y_train_df <span class="op">=</span> Y_df[Y_df.ds <span class="op">&lt;=</span> <span class="st">'2016-06-12'</span>]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>Y_test_df <span class="op">=</span> Y_df[Y_df.ds <span class="op">&gt;</span> <span class="st">'2016-06-12'</span>]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Train: </span><span class="sc">{</span>Y_train_df<span class="sc">.</span>ds<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test: </span><span class="sc">{</span>Y_test_df<span class="sc">.</span>ds<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Train: 1962
+Test: 7</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>models <span class="op">=</span> [ADIDA(), IMAPA(), TSB(alpha_d<span class="op">=</span><span class="fl">0.2</span>, alpha_p<span class="op">=</span><span class="fl">0.2</span>)]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>horizon <span class="op">=</span> <span class="dv">7</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>freq <span class="op">=</span> <span class="st">"D"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the forecast object and forecast test set</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> StatsForecast(df<span class="op">=</span>Y_train_df, models<span class="op">=</span>models, freq<span class="op">=</span>freq, n_jobs<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>Y_hat_df <span class="op">=</span> model.forecast(horizon).reset_index()</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>Y_hat_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>unique_id</th>
+      <th>ds</th>
+      <th>ADIDA</th>
+      <th>IMAPA</th>
+      <th>TSB</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-13</td>
+      <td>2.153789</td>
+      <td>2.233399</td>
+      <td>2.424801</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-14</td>
+      <td>2.153789</td>
+      <td>2.233399</td>
+      <td>2.424801</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-15</td>
+      <td>2.153789</td>
+      <td>2.233399</td>
+      <td>2.424801</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-16</td>
+      <td>2.153789</td>
+      <td>2.233399</td>
+      <td>2.424801</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-17</td>
+      <td>2.153789</td>
+      <td>2.233399</td>
+      <td>2.424801</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>Y_test_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>unique_id</th>
+      <th>ds</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>575306</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-13</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>575307</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-14</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>575308</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-15</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>575309</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-16</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>575310</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-17</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>46805207</th>
+      <td>HOUSEHOLD_2_460_CA_1</td>
+      <td>2016-06-15</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>46805208</th>
+      <td>HOUSEHOLD_2_460_CA_1</td>
+      <td>2016-06-16</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>46805209</th>
+      <td>HOUSEHOLD_2_460_CA_1</td>
+      <td>2016-06-17</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>46805210</th>
+      <td>HOUSEHOLD_2_460_CA_1</td>
+      <td>2016-06-18</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>46805211</th>
+      <td>HOUSEHOLD_2_460_CA_1</td>
+      <td>2016-06-19</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>700 rows × 3 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="model-evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="model-evaluation">Model Evaluation</h2>
+<section id="quantitative-evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="quantitative-evaluation">Quantitative evaluation</h3>
+<p>For the evaluation we use the Mean Absolute Error</p>
+<p><span class="math display">\[ \mathrm{MAE}(y, \hat{y}) = \frac{1}{N*H} \sum_{i,\tau} |y_{i,\tau}-\hat{y}_{i,\tau}| \]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mae(y_hat, y_true):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.mean(np.<span class="bu">abs</span>(y_hat<span class="op">-</span>y_true))</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>y_true <span class="op">=</span> Y_test_df[<span class="st">'y'</span>].values</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>adida_preds <span class="op">=</span> Y_hat_df[<span class="st">'ADIDA'</span>].values</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>imapa_preds <span class="op">=</span> Y_hat_df[<span class="st">'IMAPA'</span>].values</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>tsb_preds <span class="op">=</span> Y_hat_df[<span class="st">'TSB'</span>].values</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'ADIDA MAE: </span><span class="ch">\t</span><span class="st"> </span><span class="sc">%0.3f</span><span class="st">'</span> <span class="op">%</span> mae(adida_preds, y_true))</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'iMAPA MAE: </span><span class="ch">\t</span><span class="st"> </span><span class="sc">%0.3f</span><span class="st">'</span> <span class="op">%</span> mae(imapa_preds, y_true))</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'TSB   MAE: </span><span class="ch">\t</span><span class="st"> </span><span class="sc">%0.3f</span><span class="st">'</span> <span class="op">%</span> mae(tsb_preds, y_true))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ADIDA MAE:   1.172
+iMAPA MAE:   1.173
+TSB   MAE:   1.180</code></pre>
+</div>
+</div>
+</section>
+<section id="plotting-predictions" class="level3">
+<h3 class="anchored" data-anchor-id="plotting-predictions">Plotting predictions</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>Y_hat_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>unique_id</th>
+      <th>ds</th>
+      <th>ADIDA</th>
+      <th>IMAPA</th>
+      <th>TSB</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-13</td>
+      <td>2.153789</td>
+      <td>2.233399</td>
+      <td>2.424801</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-14</td>
+      <td>2.153789</td>
+      <td>2.233399</td>
+      <td>2.424801</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-15</td>
+      <td>2.153789</td>
+      <td>2.233399</td>
+      <td>2.424801</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-16</td>
+      <td>2.153789</td>
+      <td>2.233399</td>
+      <td>2.424801</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>FOODS_1_035_CA_1</td>
+      <td>2016-06-17</td>
+      <td>2.153789</td>
+      <td>2.233399</td>
+      <td>2.424801</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>695</th>
+      <td>HOUSEHOLD_2_460_CA_1</td>
+      <td>2016-06-15</td>
+      <td>0.075524</td>
+      <td>0.059694</td>
+      <td>0.083630</td>
+    </tr>
+    <tr>
+      <th>696</th>
+      <td>HOUSEHOLD_2_460_CA_1</td>
+      <td>2016-06-16</td>
+      <td>0.075524</td>
+      <td>0.059694</td>
+      <td>0.083630</td>
+    </tr>
+    <tr>
+      <th>697</th>
+      <td>HOUSEHOLD_2_460_CA_1</td>
+      <td>2016-06-17</td>
+      <td>0.075524</td>
+      <td>0.059694</td>
+      <td>0.083630</td>
+    </tr>
+    <tr>
+      <th>698</th>
+      <td>HOUSEHOLD_2_460_CA_1</td>
+      <td>2016-06-18</td>
+      <td>0.075524</td>
+      <td>0.059694</td>
+      <td>0.083630</td>
+    </tr>
+    <tr>
+      <th>699</th>
+      <td>HOUSEHOLD_2_460_CA_1</td>
+      <td>2016-06-19</td>
+      <td>0.075524</td>
+      <td>0.059694</td>
+      <td>0.083630</td>
+    </tr>
+  </tbody>
+</table>
+<p>700 rows × 5 columns</p>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>Y_test_df <span class="op">=</span> Y_test_df.merge(Y_hat_df, how<span class="op">=</span><span class="st">'left'</span>, on<span class="op">=</span>[<span class="st">'unique_id'</span>, <span class="st">'ds'</span>])</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>plot_grid(Y_train_df.groupby(<span class="st">'unique_id'</span>).tail(<span class="dv">3</span><span class="op">*</span>horizon), </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>          plot_titles<span class="op">=</span>plot_titles, </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>          model_cols<span class="op">=</span>[<span class="st">'ADIDA'</span>, <span class="st">'IMAPA'</span>, <span class="st">'TSB'</span>], </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>          df_test<span class="op">=</span>Y_test_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="IntermittentData_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p><a href="https://colab.research.google.com/github/Nixtla/statsforecast/blob/main/nbs/examples/IntermittentData.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

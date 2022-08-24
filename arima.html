@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.75">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>statsforecast - ARIMA</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: 1;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="statsforecast - ARIMA">
+<meta property="og:description" content="Returns h-step forecasts for the data used in fitting the model.">
+<meta property="og:site-name" content="statsforecast">
+<meta name="twitter:title" content="statsforecast - ARIMA">
+<meta name="twitter:description" content="Returns h-step forecasts for the data used in fitting the model.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">statsforecast</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./examples/Getting_Started_with_Auto_Arima_and_ETS.html" aria-current="page">Get Started</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/Nixtla/statsforecast/tree/main/experiments">Experiments</a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-help" role="button" data-bs-toggle="dropdown" aria-expanded="false">Help</a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-help">    
+        <li>
+    <a class="dropdown-item" href="https://github.com/nixtla/statsforecast/issues"><i class="bi bi-bug" role="img">
+</i> 
+ <span class="dropdown-text">Report an Issue</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://join.slack.com/t/nixtlaworkspace/shared_invite/zt-135dssye9-fWTzMpv2WBthq8NK0Yvu6A"><i class="bi bi-chat-right-text" role="img">
+</i> 
+ <span class="dropdown-text">Slack Nixtla</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Nixtla/statsforecast/tree/main/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/nixtlainc"><i class="bi bi-twitter" role="img" aria-label="Nixtla Twitter">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">ARIMA</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Statistical ⚡️ Forecast</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Getting_Started_with_Auto_Arima_and_ETS.html" class="sidebar-item-text sidebar-link">Getting Started with AutoARIMA and ETS</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Installation.html" class="sidebar-item-text sidebar-link">Installation</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Reference</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./core.html" class="sidebar-item-text sidebar-link">Core</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.html" class="sidebar-item-text sidebar-link">Models</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils.html" class="sidebar-item-text sidebar-link">Utils</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./adapters.prophet.html" class="sidebar-item-text sidebar-link">Adapters for Prophet</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">Distributed</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributed.fugue.html" class="sidebar-item-text sidebar-link">Fugue Backend</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributed.ray.html" class="sidebar-item-text sidebar-link">Ray Backend</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributed.multiprocess.html" class="sidebar-item-text sidebar-link">Multiprocess Backend</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributed.utils.html" class="sidebar-item-text sidebar-link">Distributed utils</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/AutoArima_vs_Prophet.html" class="sidebar-item-text sidebar-link">AutoARIMA Comparison (Prophet and pmdarima)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/CrossValidation.html" class="sidebar-item-text sidebar-link">Cross-validation for Time Series</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/IntermittentData.html" class="sidebar-item-text sidebar-link">Forecasting Intermitent Time Series</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Exogenous.html" class="sidebar-item-text sidebar-link">Exogenous Regressors</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/UncertaintyIntervals.html" class="sidebar-item-text sidebar-link">Prediction Intervals</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Outliers.html" class="sidebar-item-text sidebar-link">Outliers</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/NonDailyData.html" class="sidebar-item-text sidebar-link">Non Daily Data</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/ForecastingAtScale.html" class="sidebar-item-text sidebar-link">Forecasting at Scale</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples/Contributing.html" class="sidebar-item-text sidebar-link">How to Contribute</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#predict_arima" id="toc-predict_arima" class="nav-link active" data-scroll-target="#predict_arima">predict_arima</a></li>
+  <li><a href="#arima_string" id="toc-arima_string" class="nav-link" data-scroll-target="#arima_string">arima_string</a></li>
+  <li><a href="#forecast_arima" id="toc-forecast_arima" class="nav-link" data-scroll-target="#forecast_arima">forecast_arima</a></li>
+  <li><a href="#fitted_arima" id="toc-fitted_arima" class="nav-link" data-scroll-target="#fitted_arima">fitted_arima</a></li>
+  <li><a href="#auto_arima_f" id="toc-auto_arima_f" class="nav-link" data-scroll-target="#auto_arima_f">auto_arima_f</a></li>
+  <li><a href="#print_statsforecast_arima" id="toc-print_statsforecast_arima" class="nav-link" data-scroll-target="#print_statsforecast_arima">print_statsforecast_ARIMA</a></li>
+  <li><a href="#arimasummary" id="toc-arimasummary" class="nav-link" data-scroll-target="#arimasummary">ARIMASummary</a></li>
+  <li><a href="#autoarima" id="toc-autoarima" class="nav-link" data-scroll-target="#autoarima">AutoARIMA</a></li>
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes">Notes</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Nixtla/statsforecast/tree/main/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">ARIMA</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<hr>
+<section id="predict_arima" class="level3">
+<h3 class="anchored" data-anchor-id="predict_arima">predict_arima</h3>
+<blockquote class="blockquote">
+<pre><code> predict_arima (model, n_ahead, newxreg=None, se_fit=True)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>myarima(ap, order<span class="op">=</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>), seasonal<span class="op">=</span>{<span class="st">'order'</span>: (<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>), <span class="st">'period'</span>: <span class="dv">12</span>}, </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>        constant<span class="op">=</span><span class="va">False</span>, ic<span class="op">=</span><span class="st">'aicc'</span>, method<span class="op">=</span><span class="st">'CSS-ML'</span>)[<span class="st">'aic'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="arima_string" class="level3">
+<h3 class="anchored" data-anchor-id="arima_string">arima_string</h3>
+<blockquote class="blockquote">
+<pre><code> arima_string (model, padding=False)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="forecast_arima" class="level3">
+<h3 class="anchored" data-anchor-id="forecast_arima">forecast_arima</h3>
+<blockquote class="blockquote">
+<pre><code> forecast_arima (model, h=None, level=None, fan=False, xreg=None,
+                 blambda=None, bootstrap=False, npaths=5000, biasadj=None)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="fitted_arima" class="level3">
+<h3 class="anchored" data-anchor-id="fitted_arima">fitted_arima</h3>
+<blockquote class="blockquote">
+<pre><code> fitted_arima (model, h=1)</code></pre>
+</blockquote>
+<p>Returns h-step forecasts for the data used in fitting the model.</p>
+<hr>
+</section>
+<section id="auto_arima_f" class="level3">
+<h3 class="anchored" data-anchor-id="auto_arima_f">auto_arima_f</h3>
+<blockquote class="blockquote">
+<pre><code> auto_arima_f (x, d=None, D=None, max_p=5, max_q=5, max_P=2, max_Q=2,
+               max_order=5, max_d=2, max_D=1, start_p=2, start_q=2,
+               start_P=1, start_Q=1, stationary=False, seasonal=True,
+               ic='aicc', stepwise=True, nmodels=94, trace=False,
+               approximation=None, method=None, truncate=None, xreg=None,
+               test='kpss', test_kwargs=None, seasonal_test='seas',
+               seasonal_test_kwargs=None, allowdrift=True, allowmean=True,
+               blambda=None, biasadj=False, parallel=False, num_cores=2,
+               period=1)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="print_statsforecast_arima" class="level3">
+<h3 class="anchored" data-anchor-id="print_statsforecast_arima">print_statsforecast_ARIMA</h3>
+<blockquote class="blockquote">
+<pre><code> print_statsforecast_ARIMA (model, digits=3, se=True)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="arimasummary" class="level3">
+<h3 class="anchored" data-anchor-id="arimasummary">ARIMASummary</h3>
+<blockquote class="blockquote">
+<pre><code> ARIMASummary (model)</code></pre>
+</blockquote>
+<p>ARIMA Summary.</p>
+<hr>
+</section>
+<section id="autoarima" class="level3">
+<h3 class="anchored" data-anchor-id="autoarima">AutoARIMA</h3>
+<blockquote class="blockquote">
+<pre><code> AutoARIMA (d:Optional[int]=None, D:Optional[int]=None, max_p:int=5,
+            max_q:int=5, max_P:int=2, max_Q:int=2, max_order:int=5,
+            max_d:int=2, max_D:int=1, start_p:int=2, start_q:int=2,
+            start_P:int=1, start_Q:int=1, stationary:bool=False,
+            seasonal:bool=True, ic:str='aicc', stepwise:bool=True,
+            nmodels:int=94, trace:bool=False,
+            approximation:Optional[bool]=None, method:Optional[str]=None,
+            truncate:Optional[bool]=None, test:str='kpss',
+            test_kwargs:Optional[str]=None, seasonal_test:str='seas',
+            seasonal_test_kwargs:Optional[Dict]=None,
+            allowdrift:bool=True, allowmean:bool=True,
+            blambda:Optional[float]=None, biasadj:bool=False,
+            parallel:bool=False, num_cores:int=2, period:int=1)</code></pre>
+</blockquote>
+<p>An AutoARIMA estimator.</p>
+<p>Returns best ARIMA model according to either AIC, AICc or BIC value. The function conducts a search over possible model within the order constraints provided.</p>
+</section>
+<section id="parameters" class="level2">
+<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+<p>d: int optional (default None) Order of first-differencing. If missing, will choose a value based on <code>test</code>. D: int optional (default None) Order of seasonal-differencing. If missing, will choose a value based on <code>season_test</code>. max_p: int (default 5) Maximum value of p. max_q: int (default 5) Maximum value of q. max_P: int (default 2) Maximum value of P. max_Q: int (default 2) Maximum value of Q. max_order: int (default 5) Maximum value of p+q+P+Q if model selection is not stepwise. max_d: int (default 2) Maximum number of non-seasonal differences max_D: int (default 1) Maximum number of seasonal differences start_p: int (default 2) Starting value of p in stepwise procedure. start_q: int (default 2) Starting value of q in stepwise procedure. start_P: int (default 1) Starting value of P in stepwise procedure. start_Q: int (default 1) Starting value of Q in stepwise procedure. stationary: bool (default False) If True, restricts search to stationary models. seasonal: bool (default True) If False, restricts search to non-seasonal models. ic: str (default ‘aicc’) Information criterion to be used in model selection. stepwise: bool (default True) If True, will do stepwise selection (faster). Otherwise, it searches over all models. Non-stepwise selection can be very slow, especially for seasonal models. nmodels: int (default 94) Maximum number of models considered in the stepwise search. trace: bool (default False) If True, the list of ARIMA models considered will be reported. approximation: bool optional (default None) If True, estimation is via conditional sums of squares and the information criteria used for model selection are approximated. The final model is still computed using maximum likelihood estimation. Approximation should be used for long time series or a high seasonal period to avoid excessive computation times. method: str optional (default None) fitting method: maximum likelihood or minimize conditional sum-of-squares. The default (unless there are missing values) is to use conditional-sum-of-squares to find starting values, then maximum likelihood. Can be abbreviated. truncate: bool optional (default None) An integer value indicating how many observations to use in model selection. The last truncate values of the series are used to select a model when truncate is not None and approximation=True. All observations are used if either truncate=None or approximation=False. test: str (default ‘kpss’) Type of unit root test to use. See ndiffs for details. test_kwargs: str optional (default None) Additional arguments to be passed to the unit root test. seasonal_test: str (default ‘seas’) This determines which method is used to select the number of seasonal differences. The default method is to use a measure of seasonal strength computed from an STL decomposition. Other possibilities involve seasonal unit root tests. seasonal_test_kwargs: dict optional (default None) Additional arguments to be passed to the seasonal unit root test. See nsdiffs for details. allowdrift: bool (default True) If True, models with drift terms are considered. allowmean: bool (default True) If True, models with a non-zero mean are considered. blambda: float optional (default None) Box-Cox transformation parameter. If lambda=“auto”, then a transformation is automatically selected using BoxCox.lambda. The transformation is ignored if None. Otherwise, data transformed before model is estimated. biasadj: bool (default False) Use adjusted back-transformed mean for Box-Cox transformations. If transformed data is used to produce forecasts and fitted values, a regular back transformation will result in median forecasts. If biasadj is True, an adjustment will be made to produce mean forecasts and fitted values. parallel: bool (default False) If True and stepwise = False, then the specification search is done in parallel. This can give a significant speedup on multicore machines. num_cores: int (default 2) Allows the user to specify the amount of parallel processes to be used if parallel = True and stepwise = False. If None, then the number of logical cores is automatically detected and all available cores are used. period: int (default 1) Number of observations per unit of time. For example 24 for Hourly data.</p>
+</section>
+<section id="notes" class="level2">
+<h2 class="anchored" data-anchor-id="notes">Notes</h2>
+<ul>
+<li>This implementation is a mirror of Hyndman’s forecast::auto.arima.</li>
+</ul>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>[1] https://github.com/robjhyndman/forecast</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
